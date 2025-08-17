@@ -19,12 +19,12 @@ app.use('/admin', express.static(path.join(__dirname, '..', 'admin')));
 app.use('/student', express.static(path.join(__dirname, '..', 'student')));
 
 // Routes to serve HTML files
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'student', 'client.html'));
+app.get('/student', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'client/student', 'student.html'));
 });
 
 app.get('/admin', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'admin', 'admin.html'));
+  res.sendFile(path.join(__dirname, '..', 'client/admin', 'admin.html'));
 });
 
 // MongoDB Connection
@@ -76,7 +76,7 @@ app.use('/api/student', studentRoutes);
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
   console.log(`Admin panel: http://localhost:${PORT}/admin`);
-  console.log(`Student panel: http://localhost:${PORT}/`);
+  console.log(`Student panel: http://localhost:${PORT}/student`);
 });
 
 // Handle MongoDB connection events

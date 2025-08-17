@@ -1,4 +1,4 @@
-const { getMembers, getMemberCount, exportMembersToCSV, addMember } = require('../services/memberService.js');
+const { getMembers, getMemberCount, exportMembersToCSV, addMember } = require('../../services/memberService.js');
 
 
 async function handleGetMembers(req, res) {

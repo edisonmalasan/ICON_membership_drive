@@ -10,6 +10,18 @@ async function getMembers() {
     }
 }
 
+async function addMember(name, year, course, email) {
+    try {
+        const newMember = new Member({ name, year, course, email });
+        await newMember.save();
+
+        return newMember;
+    } catch (error) {
+        console.error('Error adding member:', error);
+        throw new Error('Internal server error');
+    }
+}
+
 async function getMemberCount() {
     try {
         const count = await Member.countDocuments();
@@ -42,5 +54,6 @@ async function exportMembersToCSV() {
 module.exports = {
     getMembers,
     getMemberCount,
-    exportMembersToCSV
+    exportMembersToCSV,
+    addMember
 };

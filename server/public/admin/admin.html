@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard 👑</title>
+    <link rel="stylesheet" href="admin.css">
+    <script src="admin.js" defer></script>
+</head>
+<body>
+    <div class="refresh-indicator" id="refreshIndicator">
+        ✨ New member joined!
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>👑 Admin Dashboard</h1>
+            <p>Manage your organization's membership</p>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number" id="totalMembers">0</div>
+                <div class="stat-label">Total Members</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="todayMembers">0</div>
+                <div class="stat-label">Joined Today</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="thisWeekMembers">0</div>
+                <div class="stat-label">This Week</div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <input type="text" class="search-box" id="searchBox" placeholder="Search members by name, email, or course...">
+            <button class="btn btn-primary" onclick="loadMembers()">🔄 Refresh</button>
+            <button class="btn btn-secondary" onclick="exportCSV()">📊 Export CSV</button>
+        </div>
+
+        <div class="members-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Year</th>
+                        <th>Course</th>
+                        <th>Email</th>
+                        <th>Joined</th>
+                    </tr>
+                </thead>
+                <tbody id="membersTableBody">
+                    <tr>
+                        <td colspan="5" class="loading">
+                            <div class="spinner"></div>
+                            Loading members...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body> 

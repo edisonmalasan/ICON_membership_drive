@@ -8,7 +8,7 @@ loadMemberCount();
 
 async function loadMemberCount() {
     try {
-        const response = await fetch('/api/student/count');
+        const response = await fetch('/api/v2/members/count');
         const data = await response.json();
         memberCountEl.textContent = data.count;
     } catch (error) {
@@ -34,7 +34,7 @@ form.addEventListener('submit', async (e) => {
     };
 
     try {
-        const response = await fetch('/api/student/members', {
+        const response = await fetch('/api/v2/members', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

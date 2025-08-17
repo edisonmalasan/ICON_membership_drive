@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join Our Organization! 🎓</title>
+    <link rel="stylesheet" href="student.css">
+    <script src="student.js" defer></script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="emoji">🎓</div>
+            <h1>Join Us!</h1>
+            <p>Become part of ICON!</p>
+        </div>
+
+        <form id="membershipForm">
+            <div class="form-group">
+                <label for="name">Full Name ✨</label>
+                <input type="text" id="name" name="name" required placeholder="Enter your full name">
+            </div>
+
+            <div class="form-group">
+                <label for="year">Year Level 📚</label>
+                <select id="year" name="year" required>
+                    <option value="">Select your year</option>
+                    <option value="1st Year">1st Year</option>
+                    <option value="2nd Year">2nd Year</option>
+                    <option value="3rd Year">3rd Year</option>
+                    <option value="4th Year">4th Year</option>
+                    <option value="Graduate">Graduate</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="course">Course/Program 🎯</label>
+                <input type="text" id="course" name="course" required placeholder="e.g., Computer Science, Engineering">
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email Address 📧</label>
+                <input type="email" id="email" name="email" required placeholder="your.email@example.com">
+            </div>
+
+            <button type="submit" class="submit-btn" id="submitBtn">
+                Join Our Organization! 🚀
+            </button>
+        </form>
+
+        <div id="message"></div>
+
+        <div class="member-count">
+            <p>Total Members: <strong id="memberCount">Loading...</strong></p>
+        </div>
+    </div>
+</body>

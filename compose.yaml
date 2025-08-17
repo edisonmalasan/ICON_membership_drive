@@ -1,0 +1,45 @@
+services:
+  backend:
+    build:
+      context: ./server
+    volumes:
+      - ./server:/app
+      - server_modules:/app/node_modules
+    ports:
+      - "3000:3000"
+    networks:
+      - backend_network
+
+  mongodb:
+    image: mongo:latest
+    container_name: membership-drive-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - backend_network
+
+  mongo-express:
+    image: mongo-express:latest
+    container_name: membership-drive-mongo-express
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_URL: mongodb://mongodb:27017/
+      ME_CONFIG_BASICAUTH_USERNAME: admin
+      ME_CONFIG_BASICAUTH_PASSWORD: password
+    depends_on:
+      - mongodb
+    networks:
+      - backend_network
+
+networks:
+  backend_network:
+    driver: bridge
+
+volumes:
+  mongodb_data:
+  server_modules:

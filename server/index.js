@@ -15,20 +15,20 @@ app.use(cors());
 app.use(express.json());
 
 // Serve static files from admin and student folders
-app.use('/admin', express.static(path.join(__dirname, '..', 'admin')));
-app.use('/student', express.static(path.join(__dirname, '..', 'student')));
+app.use('/admin', express.static(path.join(__dirname, 'public', 'admin')));
+app.use('/student', express.static(path.join(__dirname, 'public', 'student')));
 
 // Routes to serve HTML files
 app.get('/student', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'client/student', 'student.html'));
+  res.sendFile(path.join(__dirname, 'public', 'student', 'student.html'));
 });
 
 app.get('/admin', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'client/admin', 'admin.html'));
+  res.sendFile(path.join(__dirname, 'public', 'admin', 'admin.html'));
 });
 
 // MongoDB Connection
-mongoose.connect('mongodb://localhost:27017/membership_drive', {
+mongoose.connect('mongodb://mongodb:27017/membership_drive', {
   useNewUrlParser: true,
   useUnifiedTopology: true
 });
@@ -72,12 +72,16 @@ global.Member = Member;
 app.use('/api/admin', adminRoutes);
 app.use('/api/student', studentRoutes);
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-  console.log(`Admin panel: http://localhost:${PORT}/admin`);
-  console.log(`Student panel: http://localhost:${PORT}/student`);
-});
+try {
+  // Start server
+  app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+    console.log(`Admin panel: http://localhost:${PORT}/admin`);
+    console.log(`Student panel: http://localhost:${PORT}/student`);
+  });
+} catch (error) {
+  console.error('Error starting server:', error);
+}
 
 // Handle MongoDB connection events
 mongoose.connection.on('connected', () => {

@@ -1,4 +1,4 @@
-const { getMembers, getMemberCount, exportMembersToCSV } = require('../services/memberService.js');
+const { getMembers, getMemberCount, exportMembersToCSV, addMember } = require('../services/memberService.js');
 
 
 async function handleGetMembers(req, res) {
@@ -7,6 +7,18 @@ async function handleGetMembers(req, res) {
         res.status(200).json(members);
     }catch(error) {
         console.error('Error fetching members:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+}
+
+async function handlePostMember(req,res){
+    const { name, year, course, email } = req.body;
+
+    try {
+        const newMember = await addMember(name, year, course, email);
+        res.status(201).json(newMember);
+    } catch (error) {
+        console.error('Error adding member:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 }
@@ -35,5 +47,6 @@ async function handleExportCSV(req, res) {
 module.exports = {
     handleGetCount,
     handleExportCSV,
-    handleGetMembers
+    handleGetMembers,
+    handlePostMember
 }

@@ -16,7 +16,8 @@ document.getElementById('searchBox').addEventListener('input', function (e) {
 
 async function loadMembers() {
     try {
-        const response = await fetch('/api/members');
+        // ✅ FIXED: Changed from '/api/members' to '/api/admin/members'
+        const response = await fetch('/api/admin/members');
         const members = await response.json();
 
         allMembers = members;
@@ -34,16 +35,17 @@ async function loadMembers() {
         document.getElementById('membersTableBody').innerHTML = `
             <tr>
                 <td colspan="5" class="loading" style="color: #f56565;">
-                            ❌ Error loading members. Please refresh the page.
-                        </td>
-                    </tr>
-                `;
+                    ❌ Error loading members. Please refresh the page.
+                </td>
+            </tr>
+        `;
     }
 }
 
 async function autoRefresh() {
     try {
-        const response = await fetch('/api/count');
+        // ✅ FIXED: Changed from '/api/count' to '/api/admin/count'
+        const response = await fetch('/api/admin/count');
         const data = await response.json();
 
         if (data.count > lastMemberCount) {
@@ -59,24 +61,24 @@ function displayMembers(members) {
 
     if (members.length === 0) {
         tbody.innerHTML = `
-                    <tr>
-                        <td colspan="5" class="empty-state">
-                            🎓 No members yet. Share the registration link to get started!
-                        </td>
-                    </tr>
-                `;
+            <tr>
+                <td colspan="5" class="empty-state">
+                    🎓 No members yet. Share the registration link to get started!
+                </td>
+            </tr>
+        `;
         return;
     }
 
     tbody.innerHTML = members.map(member => `
-                <tr>
-                    <td><strong>${member.name}</strong></td>
-                    <td><span class="year-badge">${member.year}</span></td>
-                    <td>${member.course}</td>
-                    <td class="email">${member.email}</td>
-                    <td class="date">${formatDate(member.joinedAt)}</td>
-                </tr>
-            `).join('');
+        <tr>
+            <td><strong>${member.name}</strong></td>
+            <td><span class="year-badge">${member.year}</span></td>
+            <td>${member.course}</td>
+            <td class="email">${member.email}</td>
+            <td class="date">${formatDate(member.joinedAt)}</td>
+        </tr>
+    `).join('');
 }
 
 function filterMembers(searchTerm) {
@@ -132,33 +134,34 @@ function showRefreshIndicator() {
 }
 
 async function exportCSV() {
-  try {
-    const response = await fetch('/api/export/csv');
-    if (!response.ok) {
-      const msg = await response.text();
-      throw new Error(msg || `Export failed with status ${response.status}`);
+    try {
+        // ✅ FIXED: Changed from '/api/export/csv' to '/api/admin/export/csv'
+        const response = await fetch('/api/admin/export/csv');
+        if (!response.ok) {
+            const msg = await response.text();
+            throw new Error(msg || `Export failed with status ${response.status}`);
+        }
+
+        const blob = await response.blob();
+
+        // Try to use filename from Content-Disposition; fallback to a default
+        let filename = 'members.csv';
+        const cd = response.headers.get('Content-Disposition');
+        if (cd && cd.includes('filename=')) {
+            const match = cd.match(/filename\*?=(?:UTF-8''|")?([^";\n]+)/i);
+            if (match && match[1]) filename = decodeURIComponent(match[1]);
+        }
+
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a); // Firefox needs it in the DOM
+        a.click(); // trigger download
+        a.remove(); // cleanup
+        window.URL.revokeObjectURL(url);
+    } catch (err) {
+        console.error('CSV export failed:', err);
+        alert('CSV export failed. Please try again.');
     }
-
-    const blob = await response.blob();
-
-    // Try to use filename from Content-Disposition; fallback to a default
-    let filename = 'members.csv';
-    const cd = response.headers.get('Content-Disposition');
-    if (cd && cd.includes('filename=')) {
-      const match = cd.match(/filename\*?=(?:UTF-8''|")?([^";\n]+)/i);
-      if (match && match[1]) filename = decodeURIComponent(match[1]);
-    }
-
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;                 // ← this was missing
-    a.download = filename;        // set a filename
-    document.body.appendChild(a); // Firefox needs it in the DOM
-    a.click();                    // trigger download
-    a.remove();                   // cleanup
-    window.URL.revokeObjectURL(url);
-  } catch (err) {
-    console.error('CSV export failed:', err);
-    alert('CSV export failed. Please try again.');
-  }
 }

@@ -3,6 +3,10 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
 
+// Import route modules
+const adminRoutes = require('./admin_route/admin_server.js');
+const studentRoutes = require('./student_route/student_server.js');
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -10,20 +14,18 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-
-// Serve static files from admin and client folders
+// Serve static files from admin and student folders
 app.use('/admin', express.static(path.join(__dirname, '..', 'admin')));
 app.use('/student', express.static(path.join(__dirname, '..', 'student')));
 
 // Routes to serve HTML files
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'client', 'client.html'));
+  res.sendFile(path.join(__dirname, '..', 'student', 'client.html'));
 });
 
 app.get('/admin', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'admin', 'admin.html'));
 });
-
 
 // MongoDB Connection
 mongoose.connect('mongodb://localhost:27017/membership_drive', {
@@ -31,7 +33,7 @@ mongoose.connect('mongodb://localhost:27017/membership_drive', {
   useUnifiedTopology: true
 });
 
-// Member Schema
+// Member Schema (shared between routes)
 const memberSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -63,89 +65,18 @@ const memberSchema = new mongoose.Schema({
 
 const Member = mongoose.model('member', memberSchema);
 
-// Routes
+// Make Member model available globally for route files
+global.Member = Member;
 
-// Get all members (Admin)
-app.get('/api/members', async (req, res) => {
-  try {
-    const members = await Member.find().sort({ joinedAt: -1 });
-    res.json(members);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// Add new member (Client)
-app.post('/api/members', async (req, res) => {
-  try {
-    const { name, year, course, email } = req.body;
-    
-    // Check if email already exists
-    const existingMember = await Member.findOne({ email });
-    if (existingMember) {
-      return res.status(400).json({ error: 'Email already registered!' });
-    }
-
-    const member = new Member({ name, year, course, email });
-    await member.save();
-    
-    res.status(201).json({
-      message: 'Member registered successfully!',
-      member: member
-    });
-  } catch (error) {
-    if (error.code === 11000) {
-      res.status(400).json({ error: 'Email already registered!' });
-    } else {
-      res.status(400).json({ error: error.message });
-    }
-  }
-});
-
-// Get member count
-app.get('/api/count', async (req, res) => {
-  try {
-    const count = await Member.countDocuments();
-    res.json({ count });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// Export members as CSV (Admin)
-app.get('/api/export/csv', async (req, res) => {
-  try {
-    const members = await Member.find().sort({ joinedAt: -1 });
-    
-    // Create CSV content
-    const csvHeaders = 'Name,Year,Course,Email,Joined At\n';
-    const csvRows = members.map(member => 
-      `"${member.name}","${member.year}","${member.course}","${member.email}","${member.joinedAt.toISOString()}"`
-    ).join('\n');
-    
-    const csvContent = csvHeaders + csvRows;
-    
-    res.setHeader('Content-Type', 'text/csv');
-    res.setHeader('Content-Disposition', 'attachment; filename=members.csv');
-    res.send(csvContent);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// Serve static files
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'client.html'));
-});
-
-app.get('/admin', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'admin.html'));
-});
+// API Routes
+app.use('/api/admin', adminRoutes);
+app.use('/api/student', studentRoutes);
 
 // Start server
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
   console.log(`Admin panel: http://localhost:${PORT}/admin`);
+  console.log(`Student panel: http://localhost:${PORT}/`);
 });
 
 // Handle MongoDB connection events

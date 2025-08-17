@@ -17,7 +17,7 @@ document.getElementById('searchBox').addEventListener('input', function (e) {
 async function loadMembers() {
     try {
         // ✅ FIXED: Changed from '/api/members' to '/api/admin/members'
-        const response = await fetch('/api/admin/members');
+        const response = await fetch('/api/v2/members');
         const members = await response.json();
 
         allMembers = members;
@@ -45,7 +45,7 @@ async function loadMembers() {
 async function autoRefresh() {
     try {
         // ✅ FIXED: Changed from '/api/count' to '/api/admin/count'
-        const response = await fetch('/api/admin/count');
+        const response = await fetch('/api/v2/members/count');
         const data = await response.json();
 
         if (data.count > lastMemberCount) {
@@ -136,7 +136,7 @@ function showRefreshIndicator() {
 async function exportCSV() {
     try {
         // ✅ FIXED: Changed from '/api/export/csv' to '/api/admin/export/csv'
-        const response = await fetch('/api/admin/export/csv');
+        const response = await fetch('/api/v2/members/export/csv');
         if (!response.ok) {
             const msg = await response.text();
             throw new Error(msg || `Export failed with status ${response.status}`);

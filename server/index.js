@@ -9,7 +9,21 @@ const PORT = process.env.PORT || 3000;
 // Middleware
 app.use(cors());
 app.use(express.json());
-app.use(express.static('public'));
+
+
+// Serve static files from admin and client folders
+app.use('/admin', express.static(path.join(__dirname, '..', 'admin')));
+app.use('/student', express.static(path.join(__dirname, '..', 'student')));
+
+// Routes to serve HTML files
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'client', 'client.html'));
+});
+
+app.get('/admin', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'admin', 'admin.html'));
+});
+
 
 // MongoDB Connection
 mongoose.connect('mongodb://localhost:27017/membership_drive', {

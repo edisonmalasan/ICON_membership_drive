@@ -1,13 +1,13 @@
 const express = require('express');
 
-const {handleGetMembers, handleGetCount, handleExportCSV} = require('../controller/memberController.js');
+const {handleGetMembers, handleGetCount, handleExportCSV, handlePostMember} = require('../controller/memberController.js');
 
-const adminRoutes = express.Router();
-adminRoutes.use(express.json());
+const memberRoutes = express.Router();
+memberRoutes.use(express.json());
 
-adminRoutes.get('/members', handleGetMembers);
-adminRoutes.post('/members', handlePostMember);
-adminRoutes.get('/count', handleGetCount);
-adminRoutes.get('/export/csv', handleExportCSV);
+memberRoutes.get('/', handleGetMembers);
+memberRoutes.post('/', handlePostMember);
+memberRoutes.get('/count', handleGetCount);
+memberRoutes.get('/export/csv', handleExportCSV);
 
-module.exports = adminRoutes;
+module.exports = memberRoutes;

@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
+const dotenv = require('dotenv');
 
 // Import route modules
 const adminRoutes = require('./admin_route/admin_server.js');
@@ -12,6 +13,9 @@ const v2Routes = require('./v2/v2.js');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+//Environment variable config
+dotenv.config({path:'./.env'})
 
 // Middleware
 app.use(cors());

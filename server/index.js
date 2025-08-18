@@ -7,6 +7,9 @@ const path = require('path');
 const adminRoutes = require('./admin_route/admin_server.js');
 const studentRoutes = require('./student_route/student_server.js');
 
+//import v2 api
+const v2Routes = require('./v2/v2.js');
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -71,6 +74,8 @@ global.Member = Member;
 // API Routes
 app.use('/api/admin', adminRoutes);
 app.use('/api/student', studentRoutes);
+
+app.use('/api/v2', v2Routes);
 
 try {
   // Start server

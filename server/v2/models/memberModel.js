@@ -24,6 +24,16 @@ const memberSchema = new mongoose.Schema({
     trim: true,
     lowercase: true
   },
+  password: {
+    type: String,
+    minlength: 6
+  },
+  role:{
+    type: String,
+    required: true,
+    enum: ['admin', 'member'],
+    default: 'member'
+  },
   joinedAt: {
     type: Date,
     default: Date.now

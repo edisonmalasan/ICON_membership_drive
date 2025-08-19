@@ -2,6 +2,7 @@
   "name": "membership-drive-backend",
   "version": "1.0.0",
   "main": "index.js",
+  "type": "commonjs",
   "scripts": {
     "test": "test",
     "start": "node index.js",

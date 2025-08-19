@@ -12,10 +12,20 @@ async function handleGetMembers(req, res) {
 }
 
 async function handlePostMember(req,res){
-    const { name, year, course, email } = req.body;
+    const { name, year, course, email, password, role } = req.body;
+
+    if(password || role) {
+        console.log('Setting password or role:', req.user);
+        if(req.user.role !== 'admin'){
+            return res.status(403).json({ error: 'Only admins can set password or role' });
+        }
+    }
 
     try {
-        const newMember = await addMember(name, year, course, email);
+        const newMember = await addMember(name, year, course, email, password, role);
+        if (!newMember) {
+            return res.status(409).json({ error: 'Email already exists' });
+        }
         res.status(201).json(newMember);
     } catch (error) {
         console.error('Error adding member:', error);
@@ -26,6 +36,7 @@ async function handlePostMember(req,res){
 async function handleGetCount(req,res) {
     try{
         const count = await getMemberCount();
+        res.status(200).json({ count });
     }catch(error) {
         console.error('Error fetching member count:', error);
         res.status(500).json({ error: 'Internal server error' });

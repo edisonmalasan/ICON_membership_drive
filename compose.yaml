@@ -4,7 +4,7 @@ services:
       context: ./server
     volumes:
       - ./server:/app
-      - server_modules:/app/node_modules
+      - /app/node_modules
     ports:
       - "3000:3000"
     networks:
@@ -42,4 +42,3 @@ networks:
 
 volumes:
   mongodb_data:
-  server_modules:

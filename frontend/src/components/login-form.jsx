@@ -34,7 +34,7 @@ export function LoginForm({
                 <div className="flex items-center">
                   <Label htmlFor="password">Password</Label>
                   <a
-                    href="#"
+                    href="/forgot-password"
                     className="ml-auto text-sm underline-offset-2 hover:underline"
                   >
                     Forgot your password?
@@ -60,7 +60,7 @@ export function LoginForm({
             <img
               src="ICON.png"
               alt="Image"
-              className="h-90 w-90 object-cover"
+              className="h-110 w-110 object-cover"
             />
           </div>
         </CardContent>

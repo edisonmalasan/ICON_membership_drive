@@ -66,7 +66,7 @@ export function SignupForm({ className, ...props }) {
             <img
               src="ICON.png"
               alt="Image"
-              className="h-90 w-90 object-cover"
+              className="h-110 w-110 object-cover"
             />
           </div>
         </CardContent>

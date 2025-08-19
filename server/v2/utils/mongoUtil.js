@@ -4,10 +4,10 @@ const MONGOOSE_URI = "mongodb://mongodb:27017"
 
 async function connectToDatabase() {
     try {
+        console.log('Connecting to MongoDB...');
         await mongoose.connect(MONGOOSE_URI, {
             dbName: "membership_drive",
         });
-        console.log('Connected to MongoDB');
     } catch (error) {
         console.error('Error connecting to MongoDB:', error);
         throw error;

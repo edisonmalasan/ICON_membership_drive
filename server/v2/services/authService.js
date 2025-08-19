@@ -13,8 +13,11 @@ async function authenticate(email, password) {
         throw new Error('Invalid password');
     }
 
-    const token = generateToken(member);
-    return { member: member.select('-password'), token };
+    const memberObj = member.toObject();
+    delete memberObj.password;
+
+    const token = generateToken(memberObj);
+    return { member: memberObj, token };
 }
 
 module.exports = {

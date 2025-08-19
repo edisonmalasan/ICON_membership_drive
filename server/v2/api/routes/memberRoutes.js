@@ -7,9 +7,9 @@ const {handleGetMembers, handleGetCount, handleExportCSV, handlePostMember} = re
 const memberRoutes = express.Router();
 memberRoutes.use(express.json());
 
-memberRoutes.get('/', validateToken, handleGetMembers);
-memberRoutes.post('/', handlePostMember);
-memberRoutes.get('/count', handleGetCount);
-memberRoutes.get('/export/csv', validateToken, handleExportCSV);
+memberRoutes.get('/', validateToken('admin'), handleGetMembers);
+memberRoutes.post('/', validateToken('guest','admin','superuser'), handlePostMember);
+memberRoutes.get('/count', validateToken('guest'), handleGetCount);
+memberRoutes.get('/export/csv', validateToken('admin'), handleExportCSV);
 
 module.exports = memberRoutes;

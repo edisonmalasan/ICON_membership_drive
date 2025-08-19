@@ -10,9 +10,15 @@ async function getMembers() {
     }
 }
 
-async function addMember(name, year, course, email) {
+async function addMember(name, year, course, email, password, role) {
     try {
-        const newMember = new Member({ name, year, course, email });
+        // Check if member already exists
+        const existingMember = await Member.find({email});
+        if (existingMember.length > 0) {
+            return null;
+        }
+
+        const newMember = new Member({ name, year, course, email, password, role });
         await newMember.save();
 
         return newMember;

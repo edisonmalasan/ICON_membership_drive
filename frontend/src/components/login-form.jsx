@@ -22,7 +22,7 @@ export function LoginForm({
                 </p>
               </div>
               <div className="grid gap-3">
-                <Label htmlFor="email">SLU Email</Label>
+                <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
                   type="email"
@@ -49,18 +49,18 @@ export function LoginForm({
               </Button>
               <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t"></div>
               <div className="text-center text-sm">
-                Don&apos;t have an account?{" "}
-                <a href="#" className="underline underline-offset-4">
+                Don't have an account?{" "}
+                <a href="/signup" className="underline underline-offset-4">
                   Sign up
                 </a>
               </div>
             </div>
           </form>
-          <div className="bg-muted relative hidden md:block">
+          <div className="bg-muted relative hidden md:flex items-center justify-center">
             <img
               src="ICON.png"
               alt="Image"
-              className="absolute inset-0 h-full w-full object-cover"
+              className="h-90 w-90 object-cover"
             />
           </div>
         </CardContent>

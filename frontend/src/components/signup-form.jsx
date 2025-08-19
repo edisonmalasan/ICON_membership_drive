@@ -28,7 +28,7 @@ export function SignupForm({ className, ...props }) {
                 />
               </div>
               <div className="grid gap-3">
-                <Label htmlFor="name">SLU ID Number</Label>
+                <Label htmlFor="name">ID Number</Label>
                 <Input
                   id="id"
                   type="text"
@@ -38,7 +38,7 @@ export function SignupForm({ className, ...props }) {
                 />
               </div>
               <div className="grid gap-3">
-                <Label htmlFor="email">SLU Email</Label>
+                <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
                   type="email"
@@ -56,17 +56,17 @@ export function SignupForm({ className, ...props }) {
               <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t"></div>
               <div className="text-center text-sm">
                 Already have an account?{" "}
-                <a href="#" className="underline underline-offset-4">
+                <a href="/" className="underline underline-offset-4">
                   Log in
                 </a>
               </div>
             </div>
           </form>
-          <div className="bg-muted relative hidden md:block">
+          <div className="bg-muted relative hidden md:flex items-center justify-center">
             <img
               src="ICON.png"
               alt="Image"
-              className="absolute inset-0 h-full w-full object-cover"
+              className="h-90 w-90 object-cover"
             />
           </div>
         </CardContent>

@@ -39,6 +39,15 @@ async function exportMembersToCSV() {
     }
 }
 
+async function addMember(){
+    try{
+
+    }catch{
+        
+    }
+
+}
+
 module.exports = {
     getMembers,
     getMemberCount,

@@ -1,12 +1,13 @@
 import LoginPage from "@/components/pages/LoginPage";
+import SignupPage from "@/components/pages/SignupPage";
 import PaymentPage from "@/components/pages/PaymentPage";
-import TestPage from "@/components/pages/Test";
+
 
 function App() {
   return (
       //<LoginPage />
-      <PaymentPage />
-      //<TestPage />
+      <SignupPage />
+      //<PaymentPage />
 
   );
 }

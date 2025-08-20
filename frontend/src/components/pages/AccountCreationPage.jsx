@@ -24,10 +24,11 @@ import {
     DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
+import { PasswordInput } from "@/components/ui/password-input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useState } from "react";
 
-export default function Support() {
+export default function AccountCreationPage() {
     const [formData, setFormData] = useState({
         name: "",
         email: "",
@@ -121,18 +122,13 @@ export default function Support() {
                                         </div>
 
                                         <div className="grid gap-3">
-                                            <Label htmlFor="password">Password</Label>
-                                            <Input
-                                                id="password"
-                                                name="password"
-                                                type="password"
-                                                value={formData.password}
-                                                onChange={handleChange}
-                                                placeholder="Enter password"
-                                                required
-                                            />
+                                            <div className="flex items-center">
+                                                <Label htmlFor="password">Password</Label>
+                                            </div>
+                                            <div className="relative">
+                                                <PasswordInput id="password" required />
+                                            </div>
                                         </div>
-
                                         <div className="grid gap-3">
                                             <Label htmlFor="role">Role</Label>
                                             <DropdownMenu>

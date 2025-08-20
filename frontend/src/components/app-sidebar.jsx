@@ -1,9 +1,10 @@
 import * as React from "react"
 import {
   Home,
+  LayoutDashboard,
   GalleryVerticalEnd,
   CreditCard,
-  Info
+  UserPlus
 } from "lucide-react"
 
 import { NavMain } from "@/components/nav-main"
@@ -25,27 +26,26 @@ const data = {
   },
   logo: [
     {
-      name: "ICON",
-      logo: GalleryVerticalEnd
+      name: "Integrated Confederacy",
+      logo: Home
     }
   ],
   utilities: [
     {
       name: "Dashboard",
       url: "/dashboard",
-      icon: Home
+      icon: LayoutDashboard,
+      isActive: true,
     },
     {
       name: "Manage Payments",
       url: "/manage-payments",
       icon: CreditCard,
-      isActive: true,
     },
     {
       name: "Manual Account Creation",
-      url: "/support",
-      icon: Info,
-      isActive: true,
+      url: "/account-creation",
+      icon: UserPlus,
     },
   ],
 }

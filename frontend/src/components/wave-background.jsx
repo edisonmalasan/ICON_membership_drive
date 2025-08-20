@@ -4,8 +4,8 @@ export default function WaveBackground() {
   return (
     <div className="absolute -z-10 w-full h-full">
       <Waves
-        lineColor="#202020ff"
-        backgroundColor="#1a1a1aff"
+        lineColor="#242424ff"
+        backgroundColor="#1f1f1fff"
         waveSpeedX={0.02}
         waveSpeedY={0.01}
         waveAmpX={40}

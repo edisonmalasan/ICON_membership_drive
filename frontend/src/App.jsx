@@ -3,7 +3,9 @@ import LoginPage from "@/components/pages/LoginPage";
 import SignupPage from "@/components/pages/SignupPage";
 import PaymentPage from "@/components/pages/PaymentPage";
 import ForgotPasswordPage from "@/components/pages/ForgotPasswordPage";
-import AdminPaymentPage from "./components/pages/AdminPaymentPage";
+import ManagePaymentsPage from "@/components/pages/ManagePaymentsPage";
+import Dashboard from "./components/pages/Dashboard";
+import Home from "./components/pages/HomePage";
 
 function App() {
   return (
@@ -13,7 +15,9 @@ function App() {
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/payment" element={<PaymentPage />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-        <Route path="/test" element={<AdminPaymentPage />} />
+        <Route path="/payments" element={<ManagePaymentsPage/>} />
+        <Route path="/dashboard" element={<Dashboard/>} />
+        <Route path="/home" element={<Home/>}/>
       </Routes>
     </Router>
   );

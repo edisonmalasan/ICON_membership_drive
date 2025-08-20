@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PasswordInput } from "@/components/ui/password-input";
+import { LuFacebook } from "react-icons/lu";
 
 export default function LoginForm({ className, ...props }) {
   return (
@@ -58,6 +59,17 @@ export default function LoginForm({ className, ...props }) {
                       Sign up
                     </a>
                   </div>
+
+                
+                  <Button
+                    type="button"
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center gap-2"
+                    onClick={() => window.open("https://www.facebook.com/sluICON", "_blank")}
+                  >
+                    <LuFacebook />
+                    Visit ICON on Facebook
+                  </Button>
+
                 </div>
               </form>
 

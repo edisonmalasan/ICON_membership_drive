@@ -59,8 +59,6 @@ export default function LoginForm({ className, ...props }) {
                       Sign up
                     </a>
                   </div>
-
-                
                   <Button
                     type="button"
                     className="w-full bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center gap-2"

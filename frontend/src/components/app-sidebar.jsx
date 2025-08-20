@@ -3,6 +3,7 @@ import {
   Home,
   GalleryVerticalEnd,
   CreditCard,
+  Info
 } from "lucide-react"
 
 import { NavMain } from "@/components/nav-main"
@@ -36,8 +37,14 @@ const data = {
     },
     {
       name: "Manage Payments",
-      url: "/payments",
+      url: "/manage-payments",
       icon: CreditCard,
+      isActive: true,
+    },
+    {
+      name: "Manual Account Creation",
+      url: "/support",
+      icon: Info,
       isActive: true,
     },
   ],

@@ -69,9 +69,39 @@ Authenticate a member and receive a JWT token.
 
 ### GET /members
 
-Retrieve all members (Admin only).
+Retrieve all members with optional filtering (Admin only).
 
 **Authentication Required:** Admin
+
+**Query Parameters:**
+- `filter` (object, optional): Filter criteria for member data
+
+**Filter Operators:**
+- `eq`: Equals (default for simple values)
+- `gte`: Greater than or equal to
+- `lte`: Less than or equal to
+
+**Filter Examples:**
+
+Filter by year:
+```
+GET /members?filter[year]=2nd Year
+```
+
+Filter by multiple criteria:
+```
+GET /members?filter[year]=2nd Year&filter[course]=BSCS
+```
+
+Filter by date range (joined after a specific date):
+```
+GET /members?filter[joinedAt][gte]=2025-01-01
+```
+
+Filter by year and date range:
+```
+GET /members?filter[year]=3rd Year&filter[joinedAt][gte]=2025-01-01&filter[joinedAt][lte]=2025-12-31
+```
 
 **Response (200 OK):**
 ```json
@@ -171,6 +201,77 @@ Name,Year,Course,Email,Joined At
 - `401` - Authentication required
 - `403` - Admin access required
 - `500` - Internal server error
+
+---
+
+## Filtering Implementation
+
+The API supports MongoDB-style filtering on the GET /members endpoint through query parameters.
+
+### Filter Query Structure
+
+Filters are passed as query parameters using the `filter` object notation:
+
+**Simple Equality:**
+```
+?filter[fieldName]=value
+```
+Translates to MongoDB: `{ fieldName: { $eq: value } }`
+
+**Comparison Operators:**
+```
+?filter[fieldName][operator]=value
+```
+Translates to MongoDB: `{ fieldName: { $operator: value } }`
+
+### Supported Operators
+
+- `eq`: Exact match (default for simple values)
+- `gte`: Greater than or equal to
+- `lte`: Less than or equal to
+
+### Implementation Details
+
+**Parse Function (`routeUtil.js`):**
+- Converts URL query parameters to MongoDB filter objects
+- Adds `$` prefix to comparison operators
+- Wraps simple values in `$eq` operator
+- Validates operators against allowed list
+
+**Controller (`memberController.js`):**
+- Parses filters using `parseFilters` utility
+- Passes validated filters to service layer
+- Logs applied filters for debugging
+
+**Service (`memberService.js`):**
+- Applies filters directly to MongoDB `find()` query
+- Maintains default sorting by `joinedAt` (newest first)
+
+### Filter Examples
+
+**By Course:**
+```
+GET /members?filter[course]=BSCS
+// MongoDB: { course: { $eq: "BSCS" } }
+```
+
+**By Year Range:**
+```
+GET /members?filter[year][gte]=2nd Year&filter[year][lte]=4th Year
+// MongoDB: { year: { $gte: "2nd Year", $lte: "4th Year" } }
+```
+
+**By Join Date:**
+```
+GET /members?filter[joinedAt][gte]=2025-01-01
+// MongoDB: { joinedAt: { $gte: "2025-01-01" } }
+```
+
+**Multiple Filters:**
+```
+GET /members?filter[year]=3rd Year&filter[course]=BSIT
+// MongoDB: { year: { $eq: "3rd Year" }, course: { $eq: "BSIT" } }
+```
 
 ---
 

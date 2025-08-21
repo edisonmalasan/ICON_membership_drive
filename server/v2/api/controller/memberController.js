@@ -1,9 +1,16 @@
 const { getMembers, getMemberCount, exportMembersToCSV, addMember } = require('../../services/memberService.js');
 
+const { parseFilters } = require('../../utils/routeUtil.js');
 
 async function handleGetMembers(req, res) {
+    const allowedOperators = ['gte','lte','eq']
+    let filters = {}
+    if(req.query.filter){
+        filters = parseFilters(req.query, allowedOperators);
+        console.log('Filters applied:', filters);
+    }
     try{
-        const members = await getMembers();
+        const members = await getMembers(filters);
         res.status(200).json(members);
     }catch(error) {
         console.error('Error fetching members:', error);

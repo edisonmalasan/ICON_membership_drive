@@ -1,8 +1,8 @@
 const Member = require('../models/memberModel.js');
 
-async function getMembers() {
+async function getMembers(filter = {}) {
     try {
-        const members = await Member.find().sort({ joinedAt: -1 });
+        const members = await Member.find(filter).sort({ joinedAt: -1 });
         return members;
     } catch (error) {
         console.error('Error fetching members:', error);

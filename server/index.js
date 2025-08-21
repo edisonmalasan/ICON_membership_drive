@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
 const dotenv = require('dotenv');
+const qs = require('qs')
 
 const {connectToDatabase, disconnectFromDatabase} = require('./v2/utils/mongoUtil.js')
 
@@ -18,6 +19,9 @@ dotenv.config({path:'./.env'})
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+//Override default query parsing to use qs
+app.set("query parser", str => qs.parse(str));
 
 // Serve static files from admin and student folders
 app.use('/admin', express.static(path.join(__dirname, 'public', 'admin')));

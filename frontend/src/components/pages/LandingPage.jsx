@@ -316,6 +316,35 @@ export default function LandingPage() {
               </div>
             </section>
 
+            {/* section 3 */}
+            <section className="relative bg-neutral-100 -mt-317 md:-mt-145 pt-350 md:pt-190 pb-20">
+              <div className="relative z-10 max-w-6xl mx-auto px-6">
+                <div className="flex flex-col mb-16 justify-center items-center">
+                  <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
+                    Our Events in Pictures
+                  </h2>
+                  <p className="text-lg text-gray-600 max-w-3xl">
+                    Explore our vibrant community through memorable moments from
+                    past events and activities
+                  </p>
+                </div>
+                <div className="max-w-5xl mx-auto">
+                  <BentoGrid className="max-w-4xl mx-auto">
+                    {bentoItems.map((item, i) => (
+                      <BentoGridItem
+                        key={i}
+                        title={item.title}
+                        description={item.description}
+                        header={item.header}
+                        icon={item.icon}
+                        className={i === 3 || i === 6 ? "md:col-span-2" : ""}
+                      />
+                    ))}
+                  </BentoGrid>
+                </div>
+              </div>
+            </section>
+
             <BackToTop />
           </motion.div>
         )}

@@ -184,7 +184,7 @@ export default function LandingPage() {
                     transition={{ duration: 0.3, delay: 0.8 }}
                     className="relative z-10 mx-auto max-w-xl py-4 text-center text-lg font-normal text-neutral-400"
                   >
-                    Lorem, ipsum dolor sit amet consectetur adipisicing elit.
+                    Membership Drive
                   </motion.p>
                   <motion.div
                     initial={{ opacity: 0 }}
@@ -225,12 +225,17 @@ export default function LandingPage() {
                           <h1 className="text-2xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
                             What is ICON?
                           </h1>
-                          <p className="sm:text-xs md:text-xl text-gray-600 max-w-lg leading-relaxed text-justify ">
-                            Lorem ipsum dolor sit amet consectetur adipisicing
-                            elit. Nostrum dolores ullam enim inventore ratione
-                            assumenda, provident laudantium nam deleniti quam
-                            obcaecati totam doloremque omnis, eum praesentium.
-                            Eos eius voluptatibus ex!
+                          <p className="sm:text-xs md:text-base text-gray-600 max-w-lg text-justify ">
+                            The exclusive co-curricular organization for
+                            Computing and Information Studies (CIS) students of
+                            Saint Louis University, ICON (Integrated
+                            Confederacy) serves as a dynamic platform for
+                            encouraging collaboration, innovation, and community
+                            engagement. Established with the vision of uniting
+                            CIS students, ICON aims to enhance their academic
+                            journey through a variety of initiatives, events,
+                            and opportunities that promote personal and
+                            professional growth.
                           </p>
                         </div>
 

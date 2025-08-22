@@ -62,12 +62,13 @@ export default function LoginForm({ className, ...props }) {
                   <Button
                     type="button"
                     className="w-full bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center gap-2"
-                    onClick={() => window.open("https://www.facebook.com/sluICON", "_blank")}
+                    onClick={() =>
+                      window.open("https://www.facebook.com/sluICON", "_blank")
+                    }
                   >
                     <LuFacebook />
                     Visit ICON on Facebook
                   </Button>
-
                 </div>
               </form>
 
@@ -82,8 +83,9 @@ export default function LoginForm({ className, ...props }) {
           </Card>
 
           <div className="text-muted-foreground *:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4">
-            By clicking continue, you agree to our <a href="#">Terms of Service</a>{" "}
-            and <a href="#">Privacy Policy</a>.
+            By clicking continue, you agree to our{" "}
+            <a href="/terms-policy?returnTo=/">Terms of Service</a> and{" "}
+            <a href="/terms-policy?returnTo=/">Privacy Policy</a>.
           </div>
         </div>
       </div>

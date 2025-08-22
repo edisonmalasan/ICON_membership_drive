@@ -1,22 +1,23 @@
-import * as React from "react"
+"use client";
+
+import * as React from "react";
 import {
   Home,
   LayoutDashboard,
-  GalleryVerticalEnd,
   CreditCard,
   UserPlus
-} from "lucide-react"
+} from "lucide-react";
 
-import { NavMain } from "@/components/nav-main"
-import { NavUser } from "@/components/nav-user"
-import { SidebarLogo } from "@/components/nav-logo"
+import { NavMain } from "@/components/nav-main";
+import { NavUser } from "@/components/nav-user";
+import { SidebarLogo } from "@/components/nav-logo";
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
   SidebarRail,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
 
 const data = {
   user: {
@@ -35,7 +36,6 @@ const data = {
       name: "Dashboard",
       url: "/dashboard",
       icon: LayoutDashboard,
-      isActive: true,
     },
     {
       name: "Manage Payments",
@@ -48,18 +48,22 @@ const data = {
       icon: UserPlus,
     },
   ],
-}
+};
 
-export function AppSidebar({
-  ...props
-}) {
+export function AppSidebar({ activeTab, ...props }) {
+
+  const utilitiesWithActive = data.utilities.map((tab) => ({
+    ...tab,
+    isActive: tab.name === activeTab,
+  }));
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
         <SidebarLogo organization={data.logo[0]} />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain utilities={data.utilities} />
+        <NavMain utilities={utilitiesWithActive} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />

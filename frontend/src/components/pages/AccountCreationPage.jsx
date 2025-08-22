@@ -1,3 +1,5 @@
+"use client";
+
 import { AppSidebar } from "@/components/app-sidebar";
 import {
     Breadcrumb,
@@ -21,19 +23,22 @@ import {
     DropdownMenuTrigger,
     DropdownMenuContent,
     DropdownMenuItem,
-    DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu"
-import { Button } from "@/components/ui/button"
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
 import { PasswordInput } from "@/components/ui/password-input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { useState } from "react";
 
 export default function AccountCreationPage() {
     const [formData, setFormData] = useState({
         name: "",
+        id: "",
         email: "",
         password: "",
         role: "User",
+        course: "CS",
+        year: "1st",
+        paymentStatus: "Pending"
     });
 
     const handleChange = (e) => {
@@ -44,7 +49,16 @@ export default function AccountCreationPage() {
         e.preventDefault();
         console.log("New Account Created:", formData);
         alert("Account created successfully (mock).");
-        setFormData({ name: "", email: "", password: "", role: "User" });
+        setFormData({
+            name: "",
+            id: "",
+            email: "",
+            password: "",
+            role: "User",
+            course: "CS",
+            year: "1st",
+            paymentStatus: "Pending"
+        });
     };
 
     return (
@@ -52,13 +66,10 @@ export default function AccountCreationPage() {
             <SidebarProvider>
                 <AppSidebar />
                 <SidebarInset>
-                    <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
+                    <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear">
                         <div className="flex items-center gap-2 px-4">
                             <SidebarTrigger className="-ml-1" />
-                            <Separator
-                                orientation="vertical"
-                                className="mr-2 data-[orientation=vertical]:h-4"
-                            />
+                            <Separator orientation="vertical" className="mr-2 data-[orientation=vertical]:h-4" />
                             <Breadcrumb>
                                 <BreadcrumbList>
                                     <BreadcrumbItem className="hidden md:block">
@@ -73,96 +84,138 @@ export default function AccountCreationPage() {
                         </div>
                     </header>
 
-                    <div className="flex flex-1 flex-col gap-4 p-4 pt-0 min-h-0">
-                        <div className="flex-1 bg-muted/50 rounded-xl flex items-center justify-center text-muted-foreground font-medium min-h-0">
-                            <Card className="w-full max-w-2xl mx-auto shadow-none">
-                                <CardContent className="p-6 md:p-8 flex flex-col gap-6">
-                                    <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-                                        <div className="flex flex-col items-center text-center">
-                                            <h1 className="text-lg font-bold">Manual Account Creation</h1>
-                                            <p className="text-muted-foreground text-balance text-xs">
-                                                Create a user account manually if registration fails
-                                            </p>
-                                        </div>
+                    <div className="flex flex-1 items-center justify-center p-2">
+                        <Card className="w-full max-w-2xl shadow-none ">
+                            <CardContent className="p-4 md:p-6 flex flex-col gap-4">
+                                <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div className="col-span-2 text-center mb-2">
+                                        <h1 className="text-lg font-bold">Manual Account Creation</h1>
+                                        <p className="text-muted-foreground text-xs">
+                                            Create a user account manually if registration fails
+                                        </p>
+                                    </div>
 
-                                        <div className="grid gap-3">
-                                            <Label htmlFor="name">Full Name</Label>
-                                            <Input
-                                                id="name"
-                                                name="name"
-                                                value={formData.name}
-                                                onChange={handleChange}
-                                                placeholder="Enter full name"
-                                                required
-                                            />
-                                        </div>
+                                    {/* Full Name */}
+                                    <div className="flex flex-col gap-4">
+                                        <Label htmlFor="name">Full Name</Label>
+                                        <Input
+                                            id="name"
+                                            name="name"
+                                            value={formData.name}
+                                            onChange={handleChange}
+                                            placeholder="Enter full name"
+                                            required
+                                            size="sm"
+                                        />
+                                    </div>
 
-                                        <div className="grid gap-3">
-                                            <Label htmlFor="id">ID Number</Label>
-                                            <Input
-                                                id="id"
-                                                type="text"
-                                                onChange={handleChange}
-                                                placeholder="XXXXXXX"
-                                                maxLength={7}
-                                                required />
-                                        </div>
+                                    {/* ID Number */}
+                                    <div className="flex flex-col gap-4">
+                                        <Label htmlFor="id">ID Number</Label>
+                                        <Input
+                                            id="id"
+                                            name="id"
+                                            value={formData.id}
+                                            onChange={handleChange}
+                                            placeholder="XXXXXXX"
+                                            maxLength={7}
+                                            required
+                                            size="sm"
+                                        />
+                                    </div>
 
-                                        <div className="grid gap-3">
-                                            <Label htmlFor="email">Email Address</Label>
-                                            <Input
-                                                id="email"
-                                                name="email"
-                                                type="email"
-                                                value={formData.email}
-                                                onChange={handleChange}
-                                                placeholder="m@slu.edu.ph"
-                                                required
-                                            />
-                                        </div>
+                                    {/* Email */}
+                                    <div className="flex flex-col gap-4">
+                                        <Label htmlFor="email">Email</Label>
+                                        <Input
+                                            id="email"
+                                            name="email"
+                                            type="email"
+                                            value={formData.email}
+                                            onChange={handleChange}
+                                            placeholder="m@slu.edu.ph"
+                                            required
+                                            size="sm"
+                                        />
+                                    </div>
 
-                                        <div className="grid gap-3">
-                                            <div className="flex items-center">
-                                                <Label htmlFor="password">Password</Label>
-                                            </div>
-                                            <div className="relative">
-                                                <PasswordInput id="password" required />
-                                            </div>
-                                        </div>
-                                        <div className="grid gap-3">
-                                            <Label htmlFor="role">Role</Label>
-                                            <DropdownMenu>
-                                                <DropdownMenuTrigger asChild>
-                                                    <Button
-                                                        variant="outline"
-                                                        className="w-full justify-between"
-                                                        id="role"
-                                                    >
-                                                        {formData.role}
-                                                    </Button>
-                                                </DropdownMenuTrigger>
-                                                <DropdownMenuContent
-                                                    align="start"
-                                                    className="w-[var(--radix-dropdown-menu-trigger-width)]"
-                                                >
-                                                    <DropdownMenuItem onClick={() => setFormData({ ...formData, role: "User" })}>
-                                                        User
-                                                    </DropdownMenuItem>
-                                                    <DropdownMenuItem onClick={() => setFormData({ ...formData, role: "Admin" })}>
-                                                        Admin
-                                                    </DropdownMenuItem>
-                                                </DropdownMenuContent>
-                                            </DropdownMenu>
-                                        </div>
+                                    {/* Password */}
+                                    <div className="flex flex-col gap-4">
+                                        <Label htmlFor="password">Password</Label>
+                                        <PasswordInput
+                                            id="password"
+                                            value={formData.password}
+                                            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                                            required
+                                            size="sm"
+                                        />
+                                    </div>
 
+                                    {/* Role */}
+                                    <div className="flex flex-col gap-4">
+                                        <Label htmlFor="role">Role</Label>
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger asChild>
+                                                <Button variant="outline" className="w-full justify-between h-8">{formData.role}</Button>
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent align="start" className="w-[var(--radix-dropdown-menu-trigger-width)]">
+                                                <DropdownMenuItem onClick={() => setFormData({ ...formData, role: "Member" })}>Member</DropdownMenuItem>
+                                                <DropdownMenuItem onClick={() => setFormData({ ...formData, role: "Admin" })}>Admin</DropdownMenuItem>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
+                                    </div>
 
-                                        <Button type="submit" className="w-full">
-                                            Create Account
-                                        </Button>
-                                    </form>
-                                </CardContent>
-                            </Card>
-                        </div>
+                                    {/* Course */}
+                                    <div className="flex flex-col gap-4">
+                                        <Label htmlFor="course">Course</Label>
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger asChild>
+                                                <Button variant="outline" className="w-full justify-between h-8">{formData.course}</Button>
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent align="start" className="w-[var(--radix-dropdown-menu-trigger-width)]">
+                                                <DropdownMenuItem onClick={() => setFormData({ ...formData, course: "CS" })}>CS</DropdownMenuItem>
+                                                <DropdownMenuItem onClick={() => setFormData({ ...formData, course: "IT" })}>IT</DropdownMenuItem>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
+                                    </div>
+
+                                    {/* Year */}
+                                    <div className="flex flex-col gap-4">
+                                        <Label htmlFor="year">Year</Label>
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger asChild>
+                                                <Button variant="outline" className="w-full justify-between h-8">{formData.year}</Button>
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent align="start" className="w-[var(--radix-dropdown-menu-trigger-width)]">
+                                                <DropdownMenuItem onClick={() => setFormData({ ...formData, year: "1st" })}>1st</DropdownMenuItem>
+                                                <DropdownMenuItem onClick={() => setFormData({ ...formData, year: "2nd" })}>2nd</DropdownMenuItem>
+                                                <DropdownMenuItem onClick={() => setFormData({ ...formData, year: "3rd" })}>3rd</DropdownMenuItem>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
+                                    </div>
+
+                                    {/* Payment Status */}
+                                    <div className="flex flex-col gap-4">
+                                        <Label htmlFor="paymentStatus">Payment Status</Label>
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger asChild>
+                                                <Button variant="outline" className="w-full justify-between h-8">{formData.paymentStatus}</Button>
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent align="start" className="w-[var(--radix-dropdown-menu-trigger-width)]">
+                                                <DropdownMenuItem onClick={() => setFormData({ ...formData, paymentStatus: "Unpaid" })}>Unpaid</DropdownMenuItem>
+                                                <DropdownMenuItem onClick={() => setFormData({ ...formData, paymentStatus: "Pending" })}>Pending</DropdownMenuItem>
+                                                <DropdownMenuItem onClick={() => setFormData({ ...formData, paymentStatus: "Paid" })}>Paid</DropdownMenuItem>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
+                                    </div>
+
+                                    {/* Submit Button */}
+                                    <div className="col-span-2">
+                                        <Button type="submit" className="w-full h-10">Create Account</Button>
+                                    </div>
+                                </form>
+                            </CardContent>
+                        </Card>
                     </div>
                 </SidebarInset>
             </SidebarProvider>

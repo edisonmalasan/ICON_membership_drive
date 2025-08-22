@@ -45,7 +45,7 @@ export default function ManagePaymentsPage() {
             </div>
           </header>
           <div className="flex flex-1 flex-col gap-4 p-4 pt-0 min-h-0">
-            <div className="flex-1 bg-muted/50 rounded-xl flex items-center justify-center text-muted-foreground font-medium min-h-0">
+            <div className="flex-1 rounded-xl flex items-center justify-center min-h-0">
               <AdminPaymentComponent />
             </div>
           </div>

@@ -8,7 +8,7 @@ import ManagePaymentsPage from "@/components/pages/ManagePaymentsPage";
 import Dashboard from "./components/pages/Dashboard";
 import Home from "./components/pages/HomePage";
 import AccountCreationPage from "./components/pages/AccountCreationPage";
-import StickyColumnsTableDemo from "./components/table-07";
+
 
 function App() {
   return (
@@ -23,7 +23,6 @@ function App() {
         <Route path="/manage-payments" element={<ManagePaymentsPage />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/account-creation" element={<AccountCreationPage />} />
-         <Route path="/test" element={<StickyColumnsTableDemo />} />
         <Route path="/home" element={<Home />} />
       </Routes>
     </Router>

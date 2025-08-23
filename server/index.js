@@ -1,5 +1,4 @@
 const express = require('express');
-const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
 const dotenv = require('dotenv');
@@ -22,19 +21,6 @@ app.use(express.json());
 
 //Override default query parsing to use qs
 app.set("query parser", str => qs.parse(str));
-
-// Serve static files from admin and student folders
-app.use('/admin', express.static(path.join(__dirname, 'public', 'admin')));
-app.use('/student', express.static(path.join(__dirname, 'public', 'student')));
-
-// Routes to serve HTML files
-app.get('/student', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'student', 'student.html'));
-});
-
-app.get('/admin', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'admin', 'admin.html'));
-});
 
 app.use('/api/v2', v2Routes);
 

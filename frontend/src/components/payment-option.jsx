@@ -20,8 +20,17 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
+import{usePaymentViewModel}from "@/integration/payment-view-model"
 
 export default function PaymentForm() {
+  const {
+    form,
+    loading,
+    responseMessage,
+    // handleChange,
+    handleSubmit,
+  } = usePaymentViewModel();
+
   const [selectedPayment, setSelectedPayment] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -31,8 +40,8 @@ export default function PaymentForm() {
   };
 
   const accountNumbers = {
-    maya: "Maya Account: 09171234567",
-    gcash: "GCash Account: 09181234567",
+    maya: "Maya Account: 09294030531",
+    gcash: "GCash Account: 09294030531",
   };
 
   return (

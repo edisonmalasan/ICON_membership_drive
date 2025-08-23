@@ -71,8 +71,6 @@ export function SignupForm({ className, ...props }) {
                     <Label htmlFor="password">Password</Label>
                     <PasswordInput
                       id="password"
-                      value={form.password}
-                      onChange={handleChange}
                       required
                     />
                   </div>

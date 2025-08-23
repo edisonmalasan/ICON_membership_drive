@@ -29,6 +29,7 @@ async function handlePostMember(req,res){
     }
 
     try {
+        console.log('Adding new member:', { name, year, course, email, role });
         const newMember = await addMember(name, year, course, email, password, role);
         if (!newMember) {
             return res.status(409).json({ error: 'Email already exists' });

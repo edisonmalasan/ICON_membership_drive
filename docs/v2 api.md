@@ -85,12 +85,12 @@ Retrieve all members with optional filtering (Admin only).
 
 Filter by year:
 ```
-GET /members?filter[year]=2nd Year
+GET /members?filter[year]=2
 ```
 
 Filter by multiple criteria:
 ```
-GET /members?filter[year]=2nd Year&filter[course]=BSCS
+GET /members?filter[year]=2&filter[course]=BSCS
 ```
 
 Filter by date range (joined after a specific date):
@@ -100,7 +100,12 @@ GET /members?filter[joinedAt][gte]=2025-01-01
 
 Filter by year and date range:
 ```
-GET /members?filter[year]=3rd Year&filter[joinedAt][gte]=2025-01-01&filter[joinedAt][lte]=2025-12-31
+GET /members?filter[year]=3&filter[joinedAt][gte]=2025-01-01&filter[joinedAt][lte]=2025-12-31
+```
+
+Filter by payment status:
+```
+GET /members?filter[status]=Paid
 ```
 
 **Response (200 OK):**
@@ -204,9 +209,162 @@ Name,Year,Course,Email,Joined At
 
 ---
 
+## Payment Endpoints
+
+### GET /payments
+
+Retrieve all payments with optional filtering (Admin only).
+
+**Authentication Required:** Admin
+
+**Query Parameters:**
+- `filter` (object, optional): Filter criteria for payment data using same filtering system as members
+
+**Response (200 OK):**
+```json
+[
+  {
+    "_id": "...",
+    "user": {
+      "_id": "...",
+      "name": "John Doe",
+      "email": "john@example.com",
+      "year": 3,
+      "course": "BSCS",
+      "role": "member"
+    },
+    "amount": 500,
+    "paymentMethod": "Digital",
+    "status": "Paid",
+    "transactionId": "TXN123456789",
+    "remarks": "Membership fee payment",
+    "screenshot": "1724441234567-screenshot.jpg",
+    "createdAt": "2025-08-23T10:30:00.000Z"
+  }
+]
+```
+
+**Error Responses:**
+- `401` - Authentication required
+- `403` - Admin access required
+- `500` - Internal server error
+
+### GET /payments/:id
+
+Retrieve a specific payment by ID (Admin only).
+
+**Authentication Required:** Admin
+
+**Response (200 OK):**
+```json
+{
+  "_id": "...",
+  "user": {
+    "_id": "...",
+    "name": "John Doe",
+    "email": "john@example.com",
+    "year": 3,
+    "course": "BSCS",
+    "role": "member"
+  },
+  "amount": 500,
+  "paymentMethod": "Digital",
+  "status": "Paid",
+  "transactionId": "TXN123456789",
+  "remarks": "Membership fee payment",
+  "screenshot": "1724441234567-screenshot.jpg",
+  "createdAt": "2025-08-23T10:30:00.000Z"
+}
+```
+
+**Error Responses:**
+- `401` - Authentication required
+- `403` - Admin access required
+- `404` - Payment not found
+- `500` - Internal server error
+
+### POST /payments
+
+Create a new payment record.
+
+**Authentication Required:** Member or Admin
+
+**Request Body:**
+```json
+{
+  "user": "66c123456789abcd12345678",  // Member ObjectId
+  "amount": 500,
+  "paymentMethod": "Digital",
+  "transactionId": "TXN123456789",
+  "remarks": "Membership fee payment"
+}
+```
+
+**Notes:**
+- For Digital payments, screenshot upload is required
+- Payment status automatically set based on payment method:
+  - Digital: "Pending" (requires verification)
+  - Cash: "Unpaid" (requires manual confirmation)
+
+**Response (201 Created):**
+```json
+{
+  "_id": "...",
+  "user": "66c123456789abcd12345678",
+  "amount": 500,
+  "paymentMethod": "Digital",
+  "status": "Pending",
+  "transactionId": "TXN123456789",
+  "remarks": "Membership fee payment",
+  "createdAt": "2025-08-23T10:30:00.000Z"
+}
+```
+
+**Error Responses:**
+- `400` - Missing required fields
+- `401` - Authentication required
+- `500` - Internal server error
+
+### PUT /payments/:id
+
+Update a payment record (Admin only).
+
+**Authentication Required:** Admin
+
+**Request Body:**
+```json
+{
+  "status": "Paid",
+  "remarks": "Payment verified and approved"
+}
+```
+
+**Response (200 OK):**
+```json
+{
+  "_id": "...",
+  "user": "66c123456789abcd12345678",
+  "amount": 500,
+  "paymentMethod": "Digital",
+  "status": "Paid",
+  "transactionId": "TXN123456789",
+  "remarks": "Payment verified and approved",
+  "screenshot": "1724441234567-screenshot.jpg",
+  "createdAt": "2025-08-23T10:30:00.000Z"
+}
+```
+
+**Error Responses:**
+- `401` - Authentication required
+- `403` - Admin access required
+- `404` - Payment not found
+- `500` - Internal server error
+
+---
+
 ## Filtering Implementation
 
-The API supports MongoDB-style filtering on the GET /members endpoint through query parameters.
+The API supports MongoDB-style filtering on the GET /members and GET /payments endpoints through query parameters.
 
 ### Filter Query Structure
 
@@ -243,9 +401,17 @@ Translates to MongoDB: `{ fieldName: { $operator: value } }`
 - Passes validated filters to service layer
 - Logs applied filters for debugging
 
+**Controller (`paymentController.js`):**
+- Uses same filtering system for payment queries
+- Supports filtering by payment status, method, amount, etc.
+
 **Service (`memberService.js`):**
 - Applies filters directly to MongoDB `find()` query
 - Maintains default sorting by `joinedAt` (newest first)
+
+**Service (`paymentService.js`):**
+- Applies filters to payment queries with user population
+- Returns payment data with populated member information
 
 ### Filter Examples
 
@@ -257,8 +423,8 @@ GET /members?filter[course]=BSCS
 
 **By Year Range:**
 ```
-GET /members?filter[year][gte]=2nd Year&filter[year][lte]=4th Year
-// MongoDB: { year: { $gte: "2nd Year", $lte: "4th Year" } }
+GET /members?filter[year][gte]=2&filter[year][lte]=4
+// MongoDB: { year: { $gte: 2, $lte: 4 } }
 ```
 
 **By Join Date:**
@@ -269,8 +435,34 @@ GET /members?filter[joinedAt][gte]=2025-01-01
 
 **Multiple Filters:**
 ```
-GET /members?filter[year]=3rd Year&filter[course]=BSIT
-// MongoDB: { year: { $eq: "3rd Year" }, course: { $eq: "BSIT" } }
+GET /members?filter[year]=3&filter[course]=BSIT
+// MongoDB: { year: { $eq: 3 }, course: { $eq: "BSIT" } }
+```
+
+**Payment Filter Examples:**
+
+**By Payment Status:**
+```
+GET /payments?filter[status]=Paid
+// MongoDB: { status: { $eq: "Paid" } }
+```
+
+**By Payment Method:**
+```
+GET /payments?filter[paymentMethod]=Digital
+// MongoDB: { paymentMethod: { $eq: "Digital" } }
+```
+
+**By Amount Range:**
+```
+GET /payments?filter[amount][gte]=100&filter[amount][lte]=1000
+// MongoDB: { amount: { $gte: 100, $lte: 1000 } }
+```
+
+**By Date Range:**
+```
+GET /payments?filter[createdAt][gte]=2025-08-01
+// MongoDB: { createdAt: { $gte: "2025-08-01" } }
 ```
 
 ---
@@ -287,9 +479,9 @@ GET /members?filter[year]=3rd Year&filter[course]=BSIT
     trim: true
   },
   year: {
-    type: String,
+    type: Number,
     required: true,
-    enum: ['1st Year', '2nd Year', '3rd Year', '4th Year', 'Graduate']
+    enum: [1, 2, 3, 4, 5]
   },
   course: {
     type: String,
@@ -314,6 +506,50 @@ GET /members?filter[year]=3rd Year&filter[course]=BSIT
     default: 'member'
   },
   joinedAt: {
+    type: Date,
+    default: Date.now
+  }
+}
+```
+
+### Payment Schema
+
+```javascript
+{
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Member',
+    required: true
+  },
+  amount: {
+    type: Number,
+    required: true
+  },
+  paymentMethod: {
+    type: String,
+    enum: ['Cash', 'Digital']
+  },
+  status: {
+    type: String,
+    required: true,
+    enum: ['Unpaid', 'Paid', 'Pending'],
+    default: function() {
+      if (this.paymentMethod === 'Digital') {
+        return 'Pending';
+      } else {
+        return 'Unpaid';
+      }
+    }
+  },
+  transactionId: {
+    type: String,
+    required: true
+  },
+  remarks: {
+    type: String,
+    required: true
+  }
+  createdAt: {
     type: Date,
     default: Date.now
   }

@@ -10,7 +10,7 @@ async function getMembers(filter = {}) {
     }
 }
 
-async function addMember(name, year, course, email, password, role) {
+async function addMember(id, name, year, course, email, password, role) {
     console.log("inserting")
     try {
         // Check if member already exists
@@ -20,7 +20,7 @@ async function addMember(name, year, course, email, password, role) {
             return null;
         }
 
-        const newMember = new Member({ name, year, course, email, password, role });
+        const newMember = new Member({id, name, year, course, email, password, role });
         await newMember.save();
 
         const member = newMember.toObject();

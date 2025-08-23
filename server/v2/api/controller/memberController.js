@@ -19,7 +19,7 @@ async function handleGetMembers(req, res) {
 }
 
 async function handlePostMember(req,res){
-    const { name, year, course, email, password, role } = req.body;
+    const { id, name, year, course, email, password, role } = req.body;
 
     if(password || role) {
         console.log('Setting password or role:', req.user);
@@ -29,8 +29,8 @@ async function handlePostMember(req,res){
     }
 
     try {
-        console.log('Adding new member:', { name, year, course, email, role });
-        const newMember = await addMember(name, year, course, email, password, role);
+        console.log('Adding new member:', { id, name, year, course, email, role });
+        const newMember = await addMember(id, name, year, course, email, password, role);
         if (!newMember) {
             return res.status(409).json({ error: 'Email already exists' });
         }

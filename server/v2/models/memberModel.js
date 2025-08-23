@@ -2,6 +2,11 @@ const mongoose = require('mongoose');
 
 // Member Schema (shared between routes)
 const memberSchema = new mongoose.Schema({
+  id:{
+    type: String,
+    required: true,
+    unique: true
+  },
   name: {
     type: String,
     required: true,

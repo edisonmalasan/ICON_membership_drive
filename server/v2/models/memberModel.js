@@ -8,9 +8,9 @@ const memberSchema = new mongoose.Schema({
     trim: true
   },
   year: {
-    type: String,
+    type: Number,
     required: true,
-    enum: ['1st Year', '2nd Year', '3rd Year', '4th Year', 'Graduate']
+    enum: [1, 2, 3, 4, 5]
   },
   course: {
     type: String,
@@ -37,7 +37,7 @@ const memberSchema = new mongoose.Schema({
   joinedAt: {
     type: Date,
     default: Date.now
-  }
+  },
 });
 
 module.exports = mongoose.model('Member', memberSchema);

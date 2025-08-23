@@ -1,18 +1,28 @@
-import api from "../api/axios";
+// services/paymentService.js
+import axios from "axios";
+import { getToken } from "./authService";
 
-export const getPayments = async (filter = {}) => {
-  const res = await api.get("/payments", { params: { filter } });
-  return res.data;
-};
+const API_URL = "http://localhost:3000/api/v2";
 
-export const getPaymentById = async (id) => {
-  const res = await api.get(`/payments/${id}`);
+export async function getPayments() {
+  const token = getToken();
+  const res = await axios.get(`${API_URL}/payments`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
   return res.data;
-};
+}
 
-export const updatePaymentStatus = async (id, status) => {
-  const res = await api.put(`/payments/${id}`, { status });
+export async function updatePaymentStatus(paymentId, status) {
+  const token = getToken();
+  const res = await axios.put(
+    `${API_URL}/payments/${paymentId}`,
+    { status },
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
   return res.data;
-};
+}
+
 
 

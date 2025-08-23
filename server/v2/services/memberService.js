@@ -2,7 +2,7 @@ const Member = require('../models/memberModel.js');
 
 async function getMembers(filter = {}) {
     try {
-        const members = await Member.find(filter).sort({ joinedAt: -1 });
+        const members = await Member.find(filter).sort({ joinedAt: -1 }).select('-password -__v -joinedAt');
         return members;
     } catch (error) {
         console.error('Error fetching members:', error);
@@ -11,17 +11,24 @@ async function getMembers(filter = {}) {
 }
 
 async function addMember(name, year, course, email, password, role) {
+    console.log("inserting")
     try {
         // Check if member already exists
         const existingMember = await Member.find({email});
         if (existingMember.length > 0) {
+            console.log('Member already exists:', email);
             return null;
         }
 
         const newMember = new Member({ name, year, course, email, password, role });
         await newMember.save();
 
-        return newMember;
+        const member = newMember.toObject();
+        delete member.password;
+        delete member.__v;
+        delete member.joinedAt;
+
+        return member;
     } catch (error) {
         console.error('Error adding member:', error);
         throw new Error('Internal server error');
@@ -55,15 +62,6 @@ async function exportMembersToCSV() {
         console.error('Error exporting members to CSV:', error);
         throw new Error('Internal server error');
     }
-}
-
-async function addMember(){
-    try{
-
-    }catch{
-        
-    }
-
 }
 
 module.exports = {

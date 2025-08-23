@@ -6,6 +6,8 @@ export function useSignupViewModel() {
     name: "",
     idNumber: "",
     email: "",
+    course:"",
+    year:""
   });
 
   const [loading, setLoading] = useState(false);
@@ -22,7 +24,7 @@ export function useSignupViewModel() {
     setResponseMessage("");
 
     try {
-      const response = await axios.post("https://your-api.com/signup", form);
+      const response = await axios.post("http://localhost:3000/api/v2/members", form);
       setResponseMessage("Account created successfully!");
       console.log("API response:", response.data);
     } catch (error) {

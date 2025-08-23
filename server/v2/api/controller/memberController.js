@@ -1,4 +1,4 @@
-const { getMembers, getMemberCount, exportMembersToCSV, addMember } = require('../../services/memberService.js');
+const { getMembers, getMemberCount, exportMembersToCSV, addMember, updateMember} = require('../../services/memberService.js');
 
 const { parseFilters } = require('../../utils/routeUtil.js');
 
@@ -63,9 +63,34 @@ async function handleExportCSV(req, res) {
     }
 }
 
+async function handlePutMember(req, res) {
+    const memberId = req.params.id;
+    const { name, year, course, email, password, role } = req.body;
+
+    if(password || role) {
+        console.log('Setting password or role:', req.user);
+        if(req.user.role !== 'admin'){
+            return res.status(403).json({ error: 'Only admins can set password or role' });
+        }
+    }
+
+    try {
+        console.log('Updating member:', memberId, { name, year, course, email, password, role });
+        const updatedMember = await updateMember(memberId, { name, year, course, email, password, role });
+        if (!updatedMember) {
+            return res.status(404).json({ error: 'Member not found' });
+        }
+        res.status(200).json(updatedMember);
+    } catch (error) {
+        console.error('Error updating member:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+}
+
 module.exports = {
     handleGetCount,
     handleExportCSV,
     handleGetMembers,
-    handlePostMember
+    handlePostMember,
+    handlePutMember,
 }

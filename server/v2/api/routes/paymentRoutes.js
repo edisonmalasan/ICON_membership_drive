@@ -8,6 +8,6 @@ paymentRoutes.use(express.json());
 
 paymentRoutes.get('/', validateToken('superuser','admin'), handleGetPayment);
 paymentRoutes.post('/', validateToken('guest','admin','superuser'), handlePostPayment);
-paymentRoutes.put('/', validateToken('admin','superuser'), handlePutPayment);
+paymentRoutes.put('/:id', validateToken('admin','superuser'), handlePutPayment);
 
 module.exports = paymentRoutes;

@@ -11,14 +11,24 @@ async function getPayments(filter={}){
 }
 
 async function createPayment(paymentData){
-    const payment = new Payment(paymentData);
-    await payment.save();
-    return payment;
+    try{
+        const payment = new Payment(paymentData);
+        await payment.save();
+        return payment;
+    }catch(error){
+        console.error('Error creating payment:', error);
+        throw new Error('Internal server error');
+    }
 }
 
 async function updatePayment(id, paymentData){
-    const payment = await Payment.findByIdAndUpdate(id, paymentData, { new: true });
-    return payment;
+    try{
+        const payment = await Payment.findByIdAndUpdate(id, paymentData, { new: true });
+        return payment;
+    }catch(error){
+        console.error('Error updating payment:', error);
+        throw new Error('Internal server error');
+    }
 }
 
 module.exports = {

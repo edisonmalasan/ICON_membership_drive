@@ -47,7 +47,7 @@ export default function TermsPolicyPage() {
               variant="ghost"
               size="sm"
               onClick={handleGoBack}
-              className="p-2 hover:bg-gray-100 rounded-full"
+              className="p-2 hover:bg-gray-100 rounded-full cursor-pointer"
             >
               <svg
                 className="h-5 w-5"
@@ -451,8 +451,8 @@ export default function TermsPolicyPage() {
                     </h3>
                   </div>
                   <p className="text-gray-600 mb-6">
-                    By clicking "Accept Terms & Continue", you confirm that you
-                    have read and understood all the terms and conditions above.
+                    By clicking "Accept", you confirm that you
+                    have read and understood all the Terms of Service & Privacy Policy above.
                   </p>
                   <p className="text-sm text-gray-500 mb-4">
                     You will be redirected back to{" "}
@@ -466,7 +466,7 @@ export default function TermsPolicyPage() {
                   <div className="flex flex-col sm:flex-row gap-3 justify-center">
                     <Button
                       onClick={handleAccept}
-                      className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors duration-200"
+                      className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors duration-200 cursor-pointer"
                     >
                       Accept
                     </Button>

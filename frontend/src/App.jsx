@@ -9,13 +9,12 @@ import Dashboard from "./components/pages/Dashboard";
 import Home from "./components/pages/HomePage";
 import AccountCreationPage from "./components/pages/AccountCreationPage";
 
-
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<LoginPage />} />
-        {/* will be a default route*/}
+        {/* will be a default route */}
         <Route path="/landing-page" element={<LandingPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/payment-option" element={<PaymentOptionPage />} />
@@ -23,7 +22,9 @@ function App() {
         <Route path="/manage-payments" element={<ManagePaymentsPage />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/account-creation" element={<AccountCreationPage />} />
+         <Route path="/test" element={<StickyColumnsTableDemo />} />
         <Route path="/home" element={<Home />} />
+        <Route path="/terms-policy" element={<TermsPolicyPage />} />
       </Routes>
     </Router>
   );

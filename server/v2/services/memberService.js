@@ -11,17 +11,15 @@ async function getMembers(filter = {}) {
     }
 }
 
-async function addMember(id, name, year, course, email, password, role) {
-    console.log("inserting")
+async function addMember(id, name, year, course, email, password, role, emailRequired) {
     try {
         // Check if member already exists
         const existingMember = await Member.find({email});
         if (existingMember.length > 0) {
-            console.log('Member already exists:', email);
-            return null;
+            throw new Error('Email already exists');
         }
 
-        const newMember = new Member({id, name, year, course, email, password, role });
+        const newMember = new Member({id, name, year, course, email, password, role, emailRequired });
         await newMember.save();
 
         const member = newMember.toObject();
@@ -67,23 +65,11 @@ async function exportMembersToCSV() {
 
 async function updateMember(id, memberData) {
     try{
-        let updatedMember = await Member.findByIdAndUpdate(id, memberData, { new: true });
-        if(updatedMember){
-            updatedMember = updatedMember.toObject();
-            delete updatedMember.password;
-            delete updatedMember.__v;
-            delete updatedMember.joinedAt;
-        }
+        let updatedMember = await Member.findByIdAndUpdate(id, memberData, { new: true }).select('-password -__v -joinedAt');
         return updatedMember;
     } catch (error) {
         if(error instanceof mongoose.Error.CastError && error.kind === 'ObjectId'){
-            let updatedMember = await Member.findOneAndUpdate({ id }, memberData, { new: true });
-            if(updatedMember){
-                updatedMember = updatedMember.toObject();
-                delete updatedMember.password;
-                delete updatedMember.__v;
-                delete updatedMember.joinedAt;
-            }
+            let updatedMember = await Member.findOneAndUpdate({ id }, memberData, { new: true }).select('-password -__v -joinedAt');
             return updatedMember;
         }
         console.error('Error updating member:', error);

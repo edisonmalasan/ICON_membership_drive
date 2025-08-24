@@ -38,10 +38,10 @@ export const ScrollIndicator = () => {
               repeat: Infinity,
               ease: "easeInOut",
             }}
-            className="flex flex-col items-center gap-2 text-neutral-500"
+            className="flex flex-col items-center gap-2 text-neutral-700"
           >
             <span className="text-sm font-medium">Scroll to explore</span>
-            <div className="w-6 h-10 border-2 border-neutral-600 rounded-full flex justify-center">
+            <div className="w-6 h-10 border-2 border-neutral-700 rounded-full flex justify-center">
               <motion.div
                 animate={{ y: [0, 12, 0] }}
                 transition={{
@@ -49,7 +49,7 @@ export const ScrollIndicator = () => {
                   repeat: Infinity,
                   ease: "easeInOut",
                 }}
-                className="w-1 h-3 bg-neutral-600 rounded-full mt-2"
+                className="w-1 h-3 bg-neutral-700 rounded-full mt-2"
               />
             </div>
           </motion.div>

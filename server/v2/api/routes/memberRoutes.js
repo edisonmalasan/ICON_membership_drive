@@ -9,7 +9,7 @@ memberRoutes.use(express.json());
 
 memberRoutes.get('/', validateToken('admin'), handleGetMembers);
 memberRoutes.post('/', validateToken('guest','admin','superuser'), handlePostMember);
-memberRoutes.put('/:id', validateToken('admin','superuser'), handlePutMember)
+memberRoutes.put('/:id', validateToken('guest','admin','superuser'), handlePutMember)
 memberRoutes.get('/count', validateToken('guest'), handleGetCount);
 memberRoutes.get('/export/csv', validateToken('admin'), handleExportCSV);
 

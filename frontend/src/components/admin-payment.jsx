@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import api from "@/api/axios";
 import {
   Table,
   TableBody,
@@ -29,38 +30,54 @@ import {
 import { cn } from "@/lib/utils";
 
 export default function AdminPaymentComponent() {
-  const initialPayments = [
-    { id: "2025003", fullName: "Jane Doe", email: "jane.doe@example.com", status: "Pending", paymentMethod: "Cash", course: "CS", year: "1st" },
-    { id: "2025004", fullName: "Maria Santos", email: "maria.santos@example.com", status: "Paid", paymentMethod: "E-Wallet", course: "IT", year: "2nd" },
-    { id: "2025005", fullName: "Juan Dela Cruz", email: "juan.delacruz@example.com", status: "Pending", paymentMethod: "Cash", course: "CS", year: "3rd" },
-    { id: "2025006", fullName: "Anna Reyes", email: "anna.reyes@example.com", status: "Pending", paymentMethod: "E-Wallet", course: "IT", year: "1st" },
-    { id: "2025007", fullName: "Carlos Mendoza", email: "carlos.mendoza@example.com", status: "Paid", paymentMethod: "Cash", course: "CS", year: "2nd" },
-    { id: "2025008", fullName: "Luis Garcia", email: "luis.garcia@example.com", status: "Pending", paymentMethod: "E-Wallet", course: "IT", year: "3rd" },
-    { id: "2025009", fullName: "Sofia Torres", email: "sofia.torres@example.com", status: "Paid", paymentMethod: "Cash", course: "CS", year: "1st" },
-    { id: "2025010", fullName: "Miguel Ramos", email: "miguel.ramos@example.com", status: "Pending", paymentMethod: "Cash", course: "IT", year: "2nd" },
-    { id: "2025011", fullName: "Isabella Cruz", email: "isabella.cruz@example.com", status: "Pending", paymentMethod: "E-Wallet", course: "CS", year: "3rd" },
-    { id: "2025012", fullName: "Javier Morales", email: "javier.morales@example.com", status: "Paid", paymentMethod: "Cash", course: "IT", year: "1st" },
-  ];
-
-  const [payments, setPayments] = useState(initialPayments);
+  const [payments, setPayments] = useState([]);
   const [search, setSearch] = useState("");
-
-  // Filters
   const [filterCourse, setFilterCourse] = useState("All");
   const [filterYear, setFilterYear] = useState("All");
   const [filterStatus, setFilterStatus] = useState("All");
-
   const [selectedPayment, setSelectedPayment] = useState(null);
   const [newStatus, setNewStatus] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  const confirmStatusChange = () => {
+  // ✅ Fetch payments on mount
+  useEffect(() => {
+    const fetchPayments = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await api.get("/payments", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setPayments(res.data);
+      } catch (err) {
+        console.error("Error fetching payments:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchPayments();
+  }, []);
+
+  // ✅ Confirm status change + call API
+  const confirmStatusChange = async () => {
     if (selectedPayment && newStatus) {
-      setPayments((prev) =>
-        prev.map((p) =>
-          p.id === selectedPayment.id ? { ...p, status: newStatus } : p
-        )
-      );
+      try {
+        const token = localStorage.getItem("token");
+        await api.patch(
+          `/payments/${selectedPayment._id}`,
+          { status: newStatus },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+
+        // Update local state after success
+        setPayments((prev) =>
+          prev.map((p) =>
+            p._id === selectedPayment._id ? { ...p, status: newStatus } : p
+          )
+        );
+      } catch (err) {
+        console.error("Error updating payment status:", err);
+      }
     }
     setIsDialogOpen(false);
     setSelectedPayment(null);
@@ -73,17 +90,18 @@ export default function AdminPaymentComponent() {
     setIsDialogOpen(true);
   };
 
+  // ✅ Filtering logic
   const filteredPayments = payments.filter((payment) => {
     const matchesSearch =
-      payment.id.toLowerCase().includes(search.toLowerCase()) ||
-      payment.fullName.toLowerCase().includes(search.toLowerCase()) ||
-      payment.email.toLowerCase().includes(search.toLowerCase());
+      payment.user?.id?.toLowerCase().includes(search.toLowerCase()) ||
+      payment.user?.name?.toLowerCase().includes(search.toLowerCase()) ||
+      payment.user?.email?.toLowerCase().includes(search.toLowerCase());
 
     const matchesCourse =
-      filterCourse === "All" ? true : payment.course === filterCourse;
+      filterCourse === "All" ? true : payment.user?.course === filterCourse;
 
     const matchesYear =
-      filterYear === "All" ? true : payment.year === filterYear;
+      filterYear === "All" ? true : `${payment.user?.year}` === filterYear;
 
     const matchesStatus =
       filterStatus === "All" ? true : payment.status === filterStatus;
@@ -91,8 +109,13 @@ export default function AdminPaymentComponent() {
     return matchesSearch && matchesCourse && matchesYear && matchesStatus;
   });
 
+  if (loading) {
+    return <p className="text-center py-6">Loading payments...</p>;
+  }
+
   return (
     <div className="w-full flex flex-col gap-4 px-4 sm:px-8 md:px-16 text-sm sm:text-base md:text-lg">
+      {/* Search */}
       <div className="flex flex-col w-full mb-2">
         <label className="text-sm font-medium mb-1">Search</label>
         <Input
@@ -102,6 +125,7 @@ export default function AdminPaymentComponent() {
           className="min-w-[150px] h-10 text-sm"
         />
       </div>
+
       {/* Filters */}
       <div className="flex flex-wrap gap-4 justify-start items-end mt-2">
         {/* Course Filter */}
@@ -128,9 +152,10 @@ export default function AdminPaymentComponent() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="All">All</SelectItem>
-              <SelectItem value="1st">1st</SelectItem>
-              <SelectItem value="2nd">2nd</SelectItem>
-              <SelectItem value="3rd">3rd</SelectItem>
+              <SelectItem value="1">1st</SelectItem>
+              <SelectItem value="2">2nd</SelectItem>
+              <SelectItem value="3">3rd</SelectItem>
+              <SelectItem value="4">4th</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -144,13 +169,14 @@ export default function AdminPaymentComponent() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="All">All</SelectItem>
-              <SelectItem value="Unpaid">Unpaid</SelectItem>
               <SelectItem value="Pending">Pending</SelectItem>
               <SelectItem value="Paid">Paid</SelectItem>
+              <SelectItem value="Unpaid">Unpaid</SelectItem>
             </SelectContent>
           </Select>
         </div>
       </div>
+
       {/* Table */}
       <div className="overflow-x-auto max-h-[500px] overflow-y-auto scrollbar-thin scrollbar-thumb-neutral-500 scrollbar-track-neutral-800 mt-2">
         <Table className="w-full min-w-[700px] table-auto p-5">
@@ -168,16 +194,13 @@ export default function AdminPaymentComponent() {
           <TableBody className="text-xs">
             {filteredPayments.length ? (
               filteredPayments.map((payment) => (
-                <TableRow
-                  key={payment.id}
-                  className="text-md transition-colors"
-                >
-                  <TableCell className="px-3 py-2">{payment.id}</TableCell>
-                  <TableCell className="px-3 py-2">{payment.fullName}</TableCell>
-                  <TableCell className="px-3 py-2">{payment.email}</TableCell>
+                <TableRow key={payment._id} className="text-md transition-colors">
+                  <TableCell className="px-3 py-2">{payment.user?.id || "N/A"}</TableCell>
+                  <TableCell className="px-3 py-2">{payment.user?.name}</TableCell>
+                  <TableCell className="px-3 py-2">{payment.user?.email}</TableCell>
                   <TableCell className="px-3 py-2 text-center">{payment.paymentMethod}</TableCell>
-                  <TableCell className="px-3 py-2 text-center">{payment.course}</TableCell>
-                  <TableCell className="px-3 py-2 text-center">{payment.year}</TableCell>
+                  <TableCell className="px-3 py-2 text-center">{payment.user?.course}</TableCell>
+                  <TableCell className="px-3 py-2 text-center">{payment.user?.year}</TableCell>
                   <TableCell className="px-3 py-2 text-center">
                     <div className="flex justify-center">
                       <Select
@@ -190,10 +213,10 @@ export default function AdminPaymentComponent() {
                             payment.status === "Unpaid"
                               ? "border-red-600 text-red-600"
                               : payment.status === "Pending"
-                                ? "border-yellow-600 text-yellow-600"
-                                : payment.status === "Paid"
-                                  ? "border-green-600 text-green-600"
-                                  : "border-gray-500 text-gray-500"
+                              ? "border-yellow-600 text-yellow-600"
+                              : payment.status === "Paid"
+                              ? "border-green-600 text-green-600"
+                              : "border-gray-500 text-gray-500"
                           )}
                         >
                           <SelectValue placeholder="Select status" />
@@ -226,7 +249,7 @@ export default function AdminPaymentComponent() {
             <DialogTitle>Confirm Status Change</DialogTitle>
             <DialogDescription>
               Are you sure you want to set{" "}
-              <span className="font-semibold">{selectedPayment?.fullName}</span>{" "}
+              <span className="font-semibold">{selectedPayment?.user?.name}</span>{" "}
               to{" "}
               <span className="font-semibold text-white">{newStatus}</span>{" "}
               status?

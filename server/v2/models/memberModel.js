@@ -29,7 +29,8 @@ const memberSchema = new mongoose.Schema({
     },
     unique: true,
     trim: true,
-    lowercase: true
+    lowercase: true,
+    sparse: true,
   },
   password: {
     type: String,

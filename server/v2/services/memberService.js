@@ -14,9 +14,11 @@ async function getMembers(filter = {}) {
 async function addMember(id, name, year, course, email, password, role, emailRequired) {
     try {
         // Check if member already exists
-        const existingMember = await Member.find({email});
-        if (existingMember.length > 0) {
-            throw new Error('Email already exists');
+        if(email){
+            const existingMember = await Member.find({email});
+            if (existingMember.length > 0) {
+                throw new Error('Email already exists');
+            }
         }
 
         const newMember = new Member({id, name, year, course, email, password, role, emailRequired });

@@ -6,7 +6,7 @@ async function getPaymentById(id, filter={}){
 }
 
 async function getPayments(filter={}){
-    const payments = await Payment.find(filter).populate('user', 'name email year course role');
+    const payments = await Payment.find(filter).populate('user', 'id name email year course role');
     return payments;
 }
 

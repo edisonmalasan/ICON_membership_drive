@@ -1,4 +1,5 @@
 const Member = require('../models/memberModel.js');
+const mongoose = require('mongoose');
 
 async function getMembers(filter = {}) {
     try {
@@ -64,9 +65,36 @@ async function exportMembersToCSV() {
     }
 }
 
+async function updateMember(id, memberData) {
+    try{
+        let updatedMember = await Member.findByIdAndUpdate(id, memberData, { new: true });
+        if(updatedMember){
+            updatedMember = updatedMember.toObject();
+            delete updatedMember.password;
+            delete updatedMember.__v;
+            delete updatedMember.joinedAt;
+        }
+        return updatedMember;
+    } catch (error) {
+        if(error instanceof mongoose.Error.CastError && error.kind === 'ObjectId'){
+            let updatedMember = await Member.findOneAndUpdate({ id }, memberData, { new: true });
+            if(updatedMember){
+                updatedMember = updatedMember.toObject();
+                delete updatedMember.password;
+                delete updatedMember.__v;
+                delete updatedMember.joinedAt;
+            }
+            return updatedMember;
+        }
+        console.error('Error updating member:', error);
+        throw new Error('Internal server error');
+    }
+}
+
 module.exports = {
     getMembers,
     getMemberCount,
     exportMembersToCSV,
-    addMember
+    addMember,
+    updateMember
 };

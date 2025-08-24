@@ -158,4 +158,18 @@ export const tracingBeamContent = [
     ),
     image: "src/assets/landing-page/events/TEKKEN.jpg",
   },
+  {
+    title: "QUIZ WHIZZ",
+    badge: "QUIZ BEE",
+    description: (
+      <>
+        <p>
+          Put your knowledge to the test in our ultimate Quiz Bee challenge!
+          Show off your wits, quick thinking, and mastery of different topics as
+          you battle it out against fellow students.
+        </p>
+      </>
+    ),
+    image: "src/assets/landing-page/events/quiz-whizz.jpg",
+  },
 ];

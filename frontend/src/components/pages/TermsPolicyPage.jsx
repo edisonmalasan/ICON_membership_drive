@@ -21,6 +21,11 @@ export default function TermsPolicyPage() {
   };
 
   useEffect(() => {
+    // Scroll to top when component mounts
+    window.scrollTo(0, 0);
+  }, []);
+
+  useEffect(() => {
     const handleScroll = () => {
       const scrollPosition = window.scrollY + window.innerHeight;
       const documentHeight = document.documentElement.scrollHeight;
@@ -47,7 +52,7 @@ export default function TermsPolicyPage() {
               variant="ghost"
               size="sm"
               onClick={handleGoBack}
-              className="p-2 hover:bg-gray-100 rounded-full cursor-pointer"
+              className="p-2 hover:bg-gray-100 rounded-full cursor-pointer text-gray-700 hover:text-gray-900"
             >
               <svg
                 className="h-5 w-5"

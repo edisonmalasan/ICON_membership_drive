@@ -14,6 +14,7 @@ import { ScrollIndicator } from "@/components/scroll-indicator";
 import { BackToTop } from "@/components/back-to-top";
 import { TypewriterEffectSmooth } from "@/components/ui/typewriter-effect";
 import { TracingBeam } from "@/components/ui/tracing-beam";
+import { Footer } from "@/components/footer";
 import {
   hoverData,
   words,
@@ -287,6 +288,8 @@ export default function LandingPage() {
                 </div>
               </div>
             </section>
+
+            <Footer />
 
             <BackToTop />
           </motion.div>

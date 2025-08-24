@@ -47,13 +47,13 @@ Authenticate a member and receive a JWT token.
   "message": "Login successful",
   "member": {
     "_id": "...",
+    "id": "ICON2025001",
     "name": "John Doe",
-    "year": "2nd Year",
+    "year": 2,
     "course": "BSCS",
     "email": "user@example.com",
     "role": "member",
-    "joinedAt": "2025-08-19T13:41:43.211Z",
-    "__v": 0
+    "status": "Paid"
   },
   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 }
@@ -113,13 +113,12 @@ GET /members?filter[status]=Paid
 [
   {
     "_id": "...",
+    "id": "ICON2025001",
     "name": "John Doe",
-    "year": "2nd Year",
+    "year": 2,
     "course": "BSCS",
     "email": "user@example.com",
     "role": "member",
-    "joinedAt": "2025-08-19T13:41:43.211Z",
-    "__v": 0
   }
 ]
 ```
@@ -138,37 +137,86 @@ Create a new member.
 **Request Body:**
 ```json
 {
+  "id": "2233915",
   "name": "John Doe",
-  "year": "2nd Year",
+  "year": 2,
   "course": "BSCS",
   "email": "user@example.com",
   "password": "password123",  // Admin only
-  "role": "member"            // Admin only
+  "role": "member",           // Admin only
+  "emailRequired": false      // Optional: bypass email requirement
 }
 ```
 
 **Notes:**
+- `id` field is required and must be unique
 - `password` and `role` fields can only be set by administrators
 - If not provided by admin, `role` defaults to "member"
+- `emailRequired` can be set to false to bypass email requirement, used for legacy data
+- `year` is a number (1-5) representing academic year
 - Public registration (guest access) only allows basic member info
 
 **Response (201 Created):**
 ```json
 {
   "_id": "...",
+  "id": "ICON2025001",
   "name": "John Doe",
-  "year": "2nd Year",
+  "year": 2,
   "course": "BSCS",
   "email": "user@example.com",
   "role": "member",
-  "joinedAt": "2025-08-19T13:41:43.211Z",
-  "__v": 0
 }
 ```
 
 **Error Responses:**
 - `403` - Only admins can set password or role
 - `409` - Email already exists
+- `500` - Internal server error
+
+### PUT /members/:id
+
+Update member information.
+
+**Authentication Required:** 
+- **Guest users**: Can only update email field
+- **Admin/Superuser**: Can update most fields (password and role updates restricted)
+
+**Request Body (Guest users):**
+```json
+{
+  "email": "newemail@example.com"
+}
+```
+
+**Request Body (Admin/Superuser):**
+```json
+{
+  "name": "Updated Name",
+  "year": 3,
+  "course": "BSIT",
+  "email": "newemail@example.com",
+  "password":"Update password"
+}
+```
+
+**Response (200 OK):**
+```json
+{
+  "_id": "...",
+  "id": "ICON2025001",
+  "name": "Updated Name",
+  "year": 3,
+  "course": "BSIT",
+  "email": "newemail@example.com",
+  "role": "member",
+```
+
+**Error Responses:**
+- `400` - Invalid input data
+- `401` - Authentication required
+- `403` - Insufficient permissions for requested update
+- `404` - Member not found
 - `500` - Internal server error
 
 ### GET /members/count
@@ -237,8 +285,7 @@ Retrieve all payments with optional filtering (Admin only).
     "paymentMethod": "Digital",
     "status": "Paid",
     "transactionId": "TXN123456789",
-    "remarks": "Membership fee payment",
-    "screenshot": "1724441234567-screenshot.jpg",
+    "remarks": "event_paymentplatorm_year",
     "createdAt": "2025-08-23T10:30:00.000Z"
   }
 ]
@@ -271,8 +318,7 @@ Retrieve a specific payment by ID (Admin only).
   "paymentMethod": "Digital",
   "status": "Paid",
   "transactionId": "TXN123456789",
-  "remarks": "Membership fee payment",
-  "screenshot": "1724441234567-screenshot.jpg",
+  "remarks": "event_paymentplatorm_year",
   "createdAt": "2025-08-23T10:30:00.000Z"
 }
 ```
@@ -296,7 +342,7 @@ Create a new payment record.
   "amount": 500,
   "paymentMethod": "Digital",
   "transactionId": "TXN123456789",
-  "remarks": "Membership fee payment"
+  "remarks": "event_paymentplatorm_year"
 }
 ```
 
@@ -315,7 +361,7 @@ Create a new payment record.
   "paymentMethod": "Digital",
   "status": "Pending",
   "transactionId": "TXN123456789",
-  "remarks": "Membership fee payment",
+  "remarks": "event_paymentplatorm_year",
   "createdAt": "2025-08-23T10:30:00.000Z"
 }
 ```
@@ -335,7 +381,7 @@ Update a payment record (Admin only).
 ```json
 {
   "status": "Paid",
-  "remarks": "Payment verified and approved"
+  "remarks": "event_paymentplatorm_year_verified"
 }
 ```
 
@@ -348,8 +394,7 @@ Update a payment record (Admin only).
   "paymentMethod": "Digital",
   "status": "Paid",
   "transactionId": "TXN123456789",
-  "remarks": "Payment verified and approved",
-  "screenshot": "1724441234567-screenshot.jpg",
+  "remarks": "event_paymentplatorm_year",
   "createdAt": "2025-08-23T10:30:00.000Z"
 }
 ```
@@ -473,6 +518,11 @@ GET /payments?filter[createdAt][gte]=2025-08-01
 
 ```javascript
 {
+  id: {
+    type: String,
+    required: true,
+    unique: true
+  },
   name: {
     type: String,
     required: true,
@@ -490,7 +540,9 @@ GET /payments?filter[createdAt][gte]=2025-08-01
   },
   email: {
     type: String,
-    required: true,
+    required: function() {
+      return this.emailRequired;
+    },
     unique: true,
     trim: true,
     lowercase: true
@@ -504,6 +556,20 @@ GET /payments?filter[createdAt][gte]=2025-08-01
     required: true,
     enum: ['admin', 'member'],
     default: 'member'
+  },
+  emailRequired: {
+    type: Boolean,
+    default: true
+  },
+  status: {
+    type: String,
+    required: true,
+    enum: ['Unpaid', 'Paid', 'Pending'],
+    default: 'Unpaid'
+  },
+  paymentMethod: {
+    type: String,
+    enum: ['Cash', 'Digital']
   },
   joinedAt: {
     type: Date,
@@ -548,7 +614,7 @@ GET /payments?filter[createdAt][gte]=2025-08-01
   remarks: {
     type: String,
     required: true
-  }
+  },
   createdAt: {
     type: Date,
     default: Date.now

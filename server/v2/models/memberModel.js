@@ -24,10 +24,13 @@ const memberSchema = new mongoose.Schema({
   },
   email: {
     type: String,
-    required: true,
+    required: function(value){
+      return this.emailRequired;
+    },
     unique: true,
     trim: true,
-    lowercase: true
+    lowercase: true,
+    sparse: true,
   },
   password: {
     type: String,
@@ -38,6 +41,10 @@ const memberSchema = new mongoose.Schema({
     required: true,
     enum: ['admin', 'member'],
     default: 'member'
+  },
+  emailRequired: {
+    type: Boolean,
+    default: true
   },
   joinedAt: {
     type: Date,

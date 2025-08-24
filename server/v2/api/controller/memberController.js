@@ -19,7 +19,7 @@ async function handleGetMembers(req, res) {
 }
 
 async function handlePostMember(req,res){
-    const { id, name, year, course, email, password, role } = req.body;
+    const { id, name, year, course, email, password, role, emailRequired } = req.body;
 
     if(password || role) {
         console.log('Setting password or role:', req.user);
@@ -28,9 +28,13 @@ async function handlePostMember(req,res){
         }
     }
 
+    if(emailRequired && emailRequired === true && !email){
+        return res.status(400).json({ error: 'Email is required' });
+    }
+
     try {
-        console.log('Adding new member:', { id, name, year, course, email, role });
-        const newMember = await addMember(id, name, year, course, email, password, role);
+        console.log('Adding new member:', { id, name, year, course, email, role, emailRequired });
+        const newMember = await addMember(id, name, year, course, email, password, role, emailRequired);
         if (!newMember) {
             return res.status(409).json({ error: 'Email already exists' });
         }
@@ -66,11 +70,28 @@ async function handleExportCSV(req, res) {
 async function handlePutMember(req, res) {
     const memberId = req.params.id;
     const { name, year, course, email, password, role } = req.body;
+    let { emailRequired } = req.body;
+
+    if(emailRequired && emailRequired === true && !email){
+        return res.status(400).json({ error: 'Email is required' });
+    }
+
+    if(!emailRequired){
+        emailRequired = true;
+    }
+
+    if(req.user.role === 'guest'){
+        const updatedMember = await updateMember(memberId, {email});
+        if (!updatedMember) {
+            return res.status(404).json({ error: 'Member not found' });
+        }
+        return res.status(200).json(updatedMember);
+    }
 
     if(password || role) {
         console.log('Setting password or role:', req.user);
         if(req.user.role !== 'admin'){
-            return res.status(403).json({ error: 'Only admins can set password or role' });
+            return res.status(403).json({ error: 'Unauthorized operation' });
         }
     }
 

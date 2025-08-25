@@ -142,13 +142,14 @@ export const tracingBeamContent = [
     image: "src/assets/landing-page/events/Arduino.jpg",
   },
   {
-    title: "Tekken 7 Tournament",
-    badge: "MINI-SPORTS",
+    title: "Tekken 8 Tournament",
+    badge: "E-SPORTS",
     description: (
       <>
         <p>
-          Unleash your fighting spirit in our Tekken 7 mini-tournament! Compete
-          against fellow students in a test of skill, strategy, and reflexes.
+          Unleash your competitive spirit in our thrilling esports tournaments!
+          Test your skills in strategy, reflexes, and teamwork as you face off
+          against fellow students in a fun and engaging environment.
         </p>
         <p>
           More than just a game it’s a chance to bond, have fun, and showcase

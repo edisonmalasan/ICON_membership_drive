@@ -19,7 +19,7 @@ import {
   hoverData,
   words,
   tracingBeamContent,
-} from "@/components/constants.jsx";
+} from "@/components/constants-data.jsx";
 
 export default function LandingPage() {
   const [showIntro, setShowIntro] = useState(true);
@@ -258,25 +258,28 @@ export default function LandingPage() {
                 </div>
                 <div className="max-w-6xl mx-auto">
                   <TracingBeam className="px-6">
-                    <div className="max-w-2xl mx-auto antialiased pt-4 relative">
+                    <div className="max-w-xl sm:max-w-2xl md:max-w-lg lg:max-w-4xl xl:max-w-5xl mx-auto antialiased pt-4 relative">
                       {tracingBeamContent.map((item, index) => (
-                        <div key={`content-${index}`} className="mb-10">
-                          <h2 className="bg-white text-black rounded-full text-sm w-fit px-4 py-1 mb-4">
+                        <div
+                          key={`content-${index}`}
+                          className="mb-6 sm:mb-8 md:mb-4 lg:mb-10"
+                        >
+                          <h2 className="bg-white text-black rounded-full text-sm w-fit px-4 py-1 mb-2 sm:mb-3 md:mb-2 lg:mb-4">
                             {item.badge}
                           </h2>
 
-                          <p className="text-xl mb-4 font-bold text-white">
+                          <p className="text-lg sm:text-xl md:text-base lg:text-2xl xl:text-3xl mb-2 sm:mb-3 md:mb-2 lg:mb-4 font-bold text-white">
                             {item.title}
                           </p>
 
-                          <div className="text-sm prose prose-sm dark:prose-invert">
+                          <div className="text-sm sm:text-base md:text-base lg:text-base xl:text-lg prose prose-sm dark:prose-invert">
                             {item?.image && (
                               <img
                                 src={item.image}
                                 alt={item.title}
                                 height="1000"
                                 width="1000"
-                                className="rounded-lg mb-10 object-cover w-full h-64"
+                                className="rounded-lg mb-6 sm:mb-8 md:mb-4 lg:mb-10 object-cover w-full h-60 sm:h-70 md:h-80 lg:h-96 xl:h-[42rem]"
                               />
                             )}
                             <div className="text-gray-300 leading-relaxed">

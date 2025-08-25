@@ -17,7 +17,7 @@ async function addMember(id, name, year, course, email, password, role, emailReq
         if(email){
             const existingMember = await Member.find({email});
             if (existingMember.length > 0) {
-                throw new Error('Email already exists');
+                return null;
             }
         }
 

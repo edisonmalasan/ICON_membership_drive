@@ -111,7 +111,7 @@ def ingest_members_from_csv(csv_file_path: str, api_url: str, headers: Dict[str,
 if __name__ == "__main__":
     # Configuration
     CSV_FILE_PATH = "./cleaned_data.csv"  
-    API_URL = "http://localhost:3000/api/v2/members"  
+    API_URL = "http://apicon.lestat.cloud/api/v2/members"  
     
     headers = {
         "Content-Type": "application/json",

@@ -20,20 +20,24 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
-import{usePaymentViewModel}from "@/integration/payment-view-model"
+import { usePaymentViewModel } from "@/integration/payment-view-model"
 
 export default function PaymentForm(memberData) {
   const {
     form,
     loading,
     responseMessage,
-    // handleChange,
     handleSubmit,
   } = usePaymentViewModel();
 
   const [selectedPayment, setSelectedPayment] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [referenceCode, setReferenceCode] = useState("");
+
+  // Get membership type and calculate amount
+  const membershipType = sessionStorage.getItem('membershipType') ? sessionStorage.getItem('membershipType') : "registration";
+  const amount = membershipType === "renewal" ? 30 : 120;
+  const isRenewal = membershipType === "renewal";
 
   const qrCodes = {
     maya: "https://img.freepik.com/free-vector/scan-me-qr-code_78370-9714.jpg?semt=ais_hybrid&w=740&q=80",
@@ -55,20 +59,15 @@ export default function PaymentForm(memberData) {
       return;
     }
     
-    // Handle payment confirmation with reference code
-    console.log("Payment confirmed with reference code:", referenceCode);
-    console.log("Payment method:", selectedPayment);
-    console.log(memberData.memberData._id);
-
     const paymentData = {
       user: memberData.memberData._id,
-      amount: 120,
+      amount: amount,
       paymentMethod: selectedPayment,
       transactionId: referenceCode,
-      remarks: "membership_2025"
+      remarks: `${membershipType}_${selectedPayment}_${new Date().getFullYear()}`
     }
 
-    console.log(paymentData);
+    console.log("Payment Data:", paymentData);
     handleSubmit(paymentData);
 
     setIsDialogOpen(false);
@@ -88,25 +87,47 @@ export default function PaymentForm(memberData) {
                     Hi {memberData.memberData.name}
                   </CardTitle>
                   <CardDescription>
-                    Select your preferred payment method to complete your registration.
+                    Complete your {isRenewal ? 'membership renewal' : 'registration'} payment to proceed.
                   </CardDescription>
+                  
+                  {/* Payment Amount Display */}
+                  <div className="mt-4 p-4 bg-muted rounded-lg border">
+                    <div className="text-center">
+                      <p className="text-sm text-muted-foreground uppercase tracking-wide">
+                        {isRenewal ? 'Renewal Fee' : 'Registration Fee'}
+                      </p>
+                      <p className="text-3xl font-bold text-primary mt-1">
+                        ₱{amount}.00
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {isRenewal ? 'Annual membership renewal' : 'One-time registration fee'}
+                      </p>
+                    </div>
+                  </div>
                 </CardHeader>
+
+                <div className="mb-4">
+                  <Label className="text-sm font-medium">Select Payment Method:</Label>
+                </div>
 
                 <RadioGroup
                   value={selectedPayment}
                   onValueChange={setSelectedPayment}
-                  className="grid grid-cols-2 gap-4 mt-4"
+                  className="grid grid-cols-2 gap-4"
                 >
                   {/* Cash */}
                   <Label
                     htmlFor="cash"
                     className={`cursor-pointer border-2 rounded-lg flex items-center justify-center p-6 font-semibold transition-all hover:shadow-md ${selectedPayment === "cash"
                       ? "border-[#00CC66] bg-[#E6F9F0] dark:bg-[#004D33] text-[#00A652]"
-                      : "border-neutral-600bg-muted dark:bg-muted"
+                      : "border-neutral-600 bg-muted dark:bg-muted"
                       }`}
                   >
                     <RadioGroupItem value="cash" id="cash" className="sr-only" />
-                    Cash
+                    <div className="text-center">
+                      <div className="text-2xl mb-2">💵</div>
+                      <div>Cash</div>
+                    </div>
                   </Label>
 
                   {/* Digital */}
@@ -118,7 +139,10 @@ export default function PaymentForm(memberData) {
                       }`}
                   >
                     <RadioGroupItem value="digital" id="digital" className="sr-only" />
-                    Digital
+                    <div className="text-center">
+                      <div className="text-2xl mb-2">📱</div>
+                      <div>Digital</div>
+                    </div>
                   </Label>
                 </RadioGroup>
 
@@ -128,8 +152,9 @@ export default function PaymentForm(memberData) {
                     onClick={() => {
                       if (selectedPayment) setIsDialogOpen(true);
                     }}
+                    disabled={!selectedPayment}
                   >
-                    Continue
+                    Pay ₱{amount}.00
                   </Button>
                 </CardFooter>
               </div>
@@ -154,13 +179,19 @@ export default function PaymentForm(memberData) {
                 </DialogTitle>
                 <DialogDescription className="text-center text-sm">
                   {selectedPayment === "cash" 
-                    ? "Pay in person and enter the reference code provided by the cashier."
-                    : "Scan the QR code or use the account number below, then enter your transaction reference code."
+                    ? `Pay ₱${amount}.00 in person and enter the reference code provided by the cashier.`
+                    : `Pay ₱${amount}.00 using the QR code or account number below, then enter your transaction reference code.`
                   }
                 </DialogDescription>
               </DialogHeader>
 
               <div className="grid gap-4 m-4 justify-items-center">
+                {/* Amount reminder */}
+                <div className="text-center p-3 bg-muted rounded-lg border w-full">
+                  <p className="text-sm text-muted-foreground">Amount to Pay</p>
+                  <p className="text-2xl font-bold text-primary">₱{amount}.00</p>
+                </div>
+
                 {selectedPayment === "digital" && (
                   <>
                     <img
@@ -179,7 +210,7 @@ export default function PaymentForm(memberData) {
                     <div className="text-6xl mb-4">💵</div>
                     <p className="font-medium text-lg">Cash Payment</p>
                     <p className="text-sm text-muted-foreground mt-2">
-                      Pay at the ICON office and get your reference code
+                      Pay ₱{amount}.00 at the ICON office and get your reference code
                     </p>
                   </div>
                 )}
@@ -204,7 +235,7 @@ export default function PaymentForm(memberData) {
                     onClick={handleConfirmPayment}
                     disabled={!referenceCode.trim()}
                   >
-                    Confirm Payment
+                    Confirm Payment (₱{amount}.00)
                   </Button>
                 </DialogFooter>
               </div>

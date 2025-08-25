@@ -25,7 +25,7 @@ export function usePaymentViewModel() {
       setResponseMessage("Payment successful!");
       console.log("API response:", response.data);
       localStorage.setItem('transactionId', response.data._id);
-      navigate("/verification");
+      navigate("/check-your-email");
     } catch (error) {
       setResponseMessage("Error payment");
       console.error(error);

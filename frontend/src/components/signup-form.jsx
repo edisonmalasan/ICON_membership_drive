@@ -12,8 +12,8 @@
         form,
         loading,
         responseMessage,
-        // handleChange,
-        handleSubmit,
+        handleChange,
+        handleSubmit
       } = useSignupViewModel();
       
     return (
@@ -22,7 +22,7 @@
           <div className={cn("flex flex-col gap-6", className)} {...props}>
             <Card className="overflow-hidden p-0">
               <CardContent className="grid p-0 md:grid-cols-2">
-                <form className="p-6 md:p-8">
+                <form onSubmit={handleSubmit} className="p-6 md:p-8">
                   <div className="flex flex-col gap-6">
                     <div className="flex flex-col items-center text-center">
                       <h1 className="text-2xl font-bold">Create Account</h1>
@@ -31,6 +31,16 @@
                       </p>
                     </div>
 
+                    {responseMessage && (
+                      <div className={`p-3 rounded-md text-sm text-center ${
+                        responseMessage.includes('Error') || responseMessage.includes('failed') 
+                          ? 'bg-red-50 text-red-700 border border-red-200' 
+                          : 'bg-green-50 text-green-700 border border-green-200'
+                      }`}>
+                        {responseMessage}
+                      </div>
+                    )}                    
+
                     <div className="grid gap-3">
                       <Label htmlFor="name">Full Name</Label>
                       <Input id="name" type="text" placeholder="John Doe" value={form.name} onChange={handleChange} required />
@@ -38,7 +48,7 @@
 
                     <div className="grid gap-3">
                       <Label htmlFor="id">ID Number</Label>
-                      <Input id="id" type="text" placeholder="XXXXXXX" maxLength={7} value={form.idNumber} onChange={handleChange} required />
+                      <Input id="id" type="text" placeholder="XXXXXXX" maxLength={7} value={form.id} onChange={handleChange} required />
                     </div>
 
                     <div className="grid gap-3">
@@ -47,8 +57,13 @@
                     </div>
 
                     <div className="grid gap-3">
-                      <Label htmlFor="password">Password</Label>
-                      <PasswordInput id="password" required />
+                      <Label htmlFor="course">Course</Label>
+                      <Input id="course" type="text" placeholder="Course Name (e.g. BSCS)" value={form.course} onChange={handleChange} required />
+                    </div>
+
+                    <div className="grid gap-3">
+                      <Label htmlFor="year">Year</Label>
+                      <Input id="year" type="text" placeholder="Year (e.g. 2)" value={form.year} onChange={handleChange} required />
                     </div>
 
                     <Button type="submit" className="w-full" disabled={loading}>

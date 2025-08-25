@@ -26,7 +26,7 @@ function App() {
         <Route path="/account-creation" element={<AccountCreationPage />} />
         <Route path="/home" element={<Home />} />
         <Route path="/terms-policy" element={<TermsPolicyPage />} />
-        <Route path="verification" element={<EmailPendingPage/>} />
+        <Route path="/check-your-email" element={<EmailPendingPage/>} />
         <Route path="*" element={<div>404 Not Found</div>} />
       </Routes>
     </Router>

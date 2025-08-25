@@ -26,8 +26,9 @@ export function usePaymentViewModel() {
       const response = await axios.post("http://localhost:3000/api/v2/payments", paymentData);
       setResponseMessage("Payment successful!");
       console.log("API response:", response.data);
+      localStorage.setItem('transactionId', response.data._id);
     } catch (error) {
-      setResponseMessage("Error payement");
+      setResponseMessage("Error payment");
       console.error(error);
     } finally {
       setLoading(false);

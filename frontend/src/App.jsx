@@ -24,12 +24,12 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<RedirectPaid><RedirectMemberFilled><SignupPage /></RedirectMemberFilled></RedirectPaid>} />
         <Route path="/renewal" element={<RedirectPaid><RedirectMemberFilled><SignupPage type="renewal" /></RedirectMemberFilled></RedirectPaid>} />
-        <Route path="/payment-option" element={<RequireMemberData><PaymentOptionPage /></RequireMemberData>} />
+        <Route path="/payment-option" element={<RedirectPaid><RequireMemberData><PaymentOptionPage /></RequireMemberData></RedirectPaid>} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/manage-payments" element={<RestrictAdmin><ManagePaymentsPage /></RestrictAdmin>} />
         <Route path="/dashboard" element={<RestrictAdmin><Dashboard /></RestrictAdmin>} />
         <Route path="/account-creation" element={<RestrictAdmin><AccountCreationPage /></RestrictAdmin>} />
-        <Route path="/home" element={<Home />} />
+        <Route path="/home" element={<RestrictAdmin><Home /></RestrictAdmin>} />
         <Route path="/terms-policy" element={<TermsPolicyPage />} />
         <Route path="/check-your-email" element={<VerificationPendingPage/>} />
         <Route path="*" element={<div>404 Not Found</div>} />

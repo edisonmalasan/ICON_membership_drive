@@ -10,11 +10,10 @@ import Home from "./components/pages/HomePage";
 import AccountCreationPage from "./components/pages/AccountCreationPage";
 import TermsPolicyPage from "./components/pages/TermsPolicyPage";
 import RequireMemberData from "./util/RequireMemberData";
-import VerificationPendingPage from "./components/pages/VerificationPage";
 import { RestrictAdmin } from "./util/RestrictAdmin";
 import RedirectPaid from "./util/RedirectPaid";
 import { RedirectMemberFilled } from "./util/RequireMemberData";
-
+import EmailPendingPage from "./components/pages/EmailPendingPage";
 
 function App() {
   return (
@@ -31,7 +30,7 @@ function App() {
         <Route path="/account-creation" element={<RestrictAdmin><AccountCreationPage /></RestrictAdmin>} />
         <Route path="/home" element={<RestrictAdmin><Home /></RestrictAdmin>} />
         <Route path="/terms-policy" element={<TermsPolicyPage />} />
-        <Route path="/check-your-email" element={<VerificationPendingPage/>} />
+        <Route path="/check-your-email" element={<EmailPendingPage/>} />
         <Route path="*" element={<div>404 Not Found</div>} />
       </Routes>
     </Router>

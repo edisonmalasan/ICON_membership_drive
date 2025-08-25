@@ -19,7 +19,7 @@ import {
   hoverData,
   words,
   tracingBeamContent,
-} from "@/components/landing-page.jsx";
+} from "@/components/constants.jsx";
 
 export default function LandingPage() {
   const [showIntro, setShowIntro] = useState(true);
@@ -52,7 +52,9 @@ export default function LandingPage() {
             className="overflow-x-hidden relative"
           >
             {/* background beams */}
-            <BackgroundBeamsWithCollision className="fixed inset-0 bg-neutral-900 w-full -z-10"></BackgroundBeamsWithCollision>
+            <div className="fixed inset-0 -z-10">
+              <BackgroundBeamsWithCollision className="w-full h-full bg-neutral-900"></BackgroundBeamsWithCollision>
+            </div>
 
             <section className="min-h-screen relative bg-transparent">
               {/* nav */}

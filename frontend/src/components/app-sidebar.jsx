@@ -21,8 +21,8 @@ import {
 
 const data = {
   user: {
-    name: "admin",
-    email: "admin@example.com",
+    name: `${localStorage.getItem("name") || "Admin User "}`,
+    email: `${localStorage.getItem("email") || "admin@example.com"}`,
     avatar: "ICON.png",
   },
   logo: [

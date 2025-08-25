@@ -25,6 +25,8 @@ export default function LoginForm({ className, ...props }) {
       const response = await api.post("/auth/login", { email, password });
 
       localStorage.setItem("token", response.data.token);
+      localStorage.setItem("name", response.data.member.name);
+      localStorage.setItem("email", response.data.member.email);
 
       // Redirect after login
       window.location.href = "/dashboard"; 

@@ -71,6 +71,7 @@ export function NavUser({
             {/* Need Backend Implementation */}
             <DropdownMenuItem
               onClick={() => {
+                localStorage.removeItem("token");
                 window.location.href = "/"
               }}
             >

@@ -18,6 +18,7 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
+        <Route path="/renewal" element={<SignupPage type="renewal" />} />
         <Route path="/payment-option" element={<RequireMemberData><PaymentOptionPage /></RequireMemberData>} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/manage-payments" element={<ManagePaymentsPage />} />
@@ -26,6 +27,7 @@ function App() {
         <Route path="/home" element={<Home />} />
         <Route path="/terms-policy" element={<TermsPolicyPage />} />
         <Route path="verification" element={<VerificationPendingPage/>} />
+        <Route path="*" element={<div>404 Not Found</div>} />
       </Routes>
     </Router>
   );

@@ -2,7 +2,7 @@ import { useState } from "react";
 import axios, {AxiosError} from "axios";
 import {useNavigate} from "react-router-dom";
 
-export function useSignupViewModel() {
+export function useSignupViewModel(type) {
   const [form, setForm] = useState({
     name: "",
     idNumber: "",
@@ -26,12 +26,24 @@ export function useSignupViewModel() {
     setLoading(true);
     setResponseMessage("");
 
+
     try {
-      const response = await axios.post("http://localhost:3000/api/v2/members", form);
-      setResponseMessage("Account created successfully!");
-      console.log("API response:", response.data);
-      localStorage.setItem("memberData", JSON.stringify(response.data));
-      navigate('/payment-option');
+      if(type === "renewal"){
+        console.log("Renewal form submitted:", form.id);
+        const renewalForm = form;
+        delete renewalForm.idNumber;
+        const response = await axios.put(`http://localhost:3000/api/v2/members/${form.id}`, renewalForm);
+        setResponseMessage("Account created successfully!");
+        console.log("API response:", response.data);
+        localStorage.setItem("memberData", JSON.stringify(response.data));
+        navigate('/payment-option');
+      }else{
+        const response = await axios.post("http://localhost:3000/api/v2/members", form);
+        setResponseMessage("Account created successfully!");
+        console.log("API response:", response.data);
+        localStorage.setItem("memberData", JSON.stringify(response.data));
+        navigate('/payment-option');
+      }
     } catch (error) {
       console.log(error instanceof AxiosError)
       if (error instanceof AxiosError) {

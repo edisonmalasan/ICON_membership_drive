@@ -13,7 +13,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ThemeProvider } from "@/components/theme-provider";
 import WaveBackground from '@/components/wave-background';
 
-export default function VerificationPendingPage() {
+export default function EmailPendingPage() {
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <main className="relative min-h-screen w-full flex items-center justify-center px-4">
@@ -45,7 +45,7 @@ export default function VerificationPendingPage() {
 
             <CardFooter className="flex flex-col sm:flex-row gap-2 mt-6 justify-center">
               <Button variant="outline" className="sm:w-auto" asChild>
-                <a href="/home">
+                <a href="/">
                   <ArrowLeft className="mr-2 h-4 w-4" />
                   Back to Home
                 </a>

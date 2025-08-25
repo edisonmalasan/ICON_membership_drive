@@ -10,7 +10,7 @@ import Home from "./components/pages/HomePage";
 import AccountCreationPage from "./components/pages/AccountCreationPage";
 import TermsPolicyPage from "./components/pages/TermsPolicyPage";
 import RequireMemberData from "./util/RequireMemberData";
-import VerificationPendingPage from "./components/pages/VerificationPage";
+import EmailPendingPage from "./components/pages/EmailPendingPage";
 function App() {
   return (
     <Router>
@@ -26,7 +26,7 @@ function App() {
         <Route path="/account-creation" element={<AccountCreationPage />} />
         <Route path="/home" element={<Home />} />
         <Route path="/terms-policy" element={<TermsPolicyPage />} />
-        <Route path="verification" element={<VerificationPendingPage/>} />
+        <Route path="verification" element={<EmailPendingPage/>} />
         <Route path="*" element={<div>404 Not Found</div>} />
       </Routes>
     </Router>

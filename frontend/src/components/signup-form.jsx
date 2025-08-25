@@ -7,14 +7,16 @@
   import { useSignupViewModel } from "@/integration/signup-view-model";
 
 
-  export function SignupForm({ className, ...props }) {
+  export function SignupForm({ type, className, ...props }) {
     const {
         form,
         loading,
         responseMessage,
         handleChange,
         handleSubmit
-      } = useSignupViewModel();
+      } = useSignupViewModel(type);
+
+      const header = type === "renewal" ? "Renew Membership" : "Create Account";
       
     return (
       <div className="relative flex min-h-screen flex-col items-center justify-center p-6 md:p-10 overflow-hidden z-10">
@@ -25,9 +27,11 @@
                 <form onSubmit={handleSubmit} className="p-6 md:p-8">
                   <div className="flex flex-col gap-6">
                     <div className="flex flex-col items-center text-center">
-                      <h1 className="text-2xl font-bold">Create Account</h1>
+                      <h1 className="text-2xl font-bold">{header}</h1>
                       <p className="text-muted-foreground text-balance">
-                        Sign up for your ICON account
+                        {type === "renewal"
+                          ? "Renew your ICON Membership"
+                          : "Sign up for your ICON Membership"}
                       </p>
                     </div>
 

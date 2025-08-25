@@ -10,6 +10,7 @@ import Home from "./components/pages/HomePage";
 import AccountCreationPage from "./components/pages/AccountCreationPage";
 import TermsPolicyPage from "./components/pages/TermsPolicyPage";
 import RequireMemberData from "./util/RequireMemberData";
+import VerificationPendingPage from "./components/pages/VerificationPage";
 function App() {
   return (
     <Router>
@@ -24,6 +25,7 @@ function App() {
         <Route path="/account-creation" element={<AccountCreationPage />} />
         <Route path="/home" element={<Home />} />
         <Route path="/terms-policy" element={<TermsPolicyPage />} />
+        <Route path="verification" element={<VerificationPendingPage/>} />
       </Routes>
     </Router>
   );

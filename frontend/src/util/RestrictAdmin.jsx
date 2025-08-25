@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { Navigate } from 'react-router-dom';
 import { authorize } from '@/services/authService';
+import Loading from '@/components/pages/Loading';
 
 export const RestrictAdmin = ({ children }) => {
     const hasChecked = useRef(false);
@@ -29,7 +30,7 @@ export const RestrictAdmin = ({ children }) => {
     }, []);
 
     if (isLoading) {
-        return <div>Loading...</div>;
+        return <Loading message="Checking authorization..." />;
     }
 
     if (!isAuthorized) {

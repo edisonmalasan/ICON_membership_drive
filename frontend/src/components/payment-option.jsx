@@ -58,10 +58,19 @@ export default function PaymentForm(memberData) {
     // Handle payment confirmation with reference code
     console.log("Payment confirmed with reference code:", referenceCode);
     console.log("Payment method:", selectedPayment);
-    
-    // Call your payment submission logic here
-    // handleSubmit({ referenceCode, paymentMethod: selectedPayment });
-    
+    console.log(memberData.memberData._id);
+
+    const paymentData = {
+      user: memberData.memberData._id,
+      amount: 120,
+      paymentMethod: selectedPayment,
+      transactionId: referenceCode,
+      remarks: "membership_2025"
+    }
+
+    console.log(paymentData);
+    handleSubmit(paymentData);
+
     setIsDialogOpen(false);
     setReferenceCode("");
   };

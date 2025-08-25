@@ -18,13 +18,12 @@ export function usePaymentViewModel() {
   //   setForm((prev) => ({ ...prev, [id]: value }));
   // };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (paymentData) => {
     setLoading(true);
     setResponseMessage("");
 
     try {
-      const response = await axios.post("http://localhost:3000/api/v2/payments", form);
+      const response = await axios.post("http://localhost:3000/api/v2/payments", paymentData);
       setResponseMessage("Payment successful!");
       console.log("API response:", response.data);
     } catch (error) {

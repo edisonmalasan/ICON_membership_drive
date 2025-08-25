@@ -38,6 +38,7 @@ export default function AdminPaymentComponent() {
   const [selectedPayment, setSelectedPayment] = useState(null);
   const [newStatus, setNewStatus] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [filterPaymentMethod, setFilterPaymentMethod] = useState("All");
   const [loading, setLoading] = useState(true);
 
   // Fetch payments on mount
@@ -91,10 +92,18 @@ export default function AdminPaymentComponent() {
 
 
   const filteredPayments = payments.filter((payment) => {
+    const searchLower = search.toLowerCase();
+
     const matchesSearch =
-      payment.user?.id?.toLowerCase().includes(search.toLowerCase()) ||
-      payment.user?.name?.toLowerCase().includes(search.toLowerCase()) ||
-      payment.user?.email?.toLowerCase().includes(search.toLowerCase());
+      payment.user?.id?.toLowerCase().includes(searchLower) ||
+      payment.user?.name?.toLowerCase().includes(searchLower) ||
+      payment.user?.email?.toLowerCase().includes(searchLower) ||
+      (payment.user?.course?.toLowerCase().includes(searchLower)) ||
+      (`${payment.user?.year}`.toLowerCase().includes(searchLower)) ||
+      (payment.paymentMethod?.toLowerCase().includes(searchLower)) ||
+      (payment.transactionId?.toLowerCase().includes(searchLower)) ||
+      (payment.status?.toLowerCase().includes(searchLower));
+
 
     const matchesCourse =
       filterCourse === "All" ? true : payment.user?.course === filterCourse;
@@ -105,12 +114,11 @@ export default function AdminPaymentComponent() {
     const matchesStatus =
       filterStatus === "All" ? true : payment.status === filterStatus;
 
-    return matchesSearch && matchesCourse && matchesYear && matchesStatus;
-  });
+    const matchesPaymentMethod =
+      filterPaymentMethod === "All" ? true : payment.paymentMethod === filterPaymentMethod;
 
-  if (loading) {
-    return <p className="text-center py-6">Loading payments...</p>;
-  }
+    return matchesSearch && matchesCourse && matchesYear && matchesStatus && matchesPaymentMethod;
+  });
 
   return (
     <div className="w-full flex flex-col gap-4 px-4 sm:px-8 md:px-16 text-sm sm:text-base md:text-lg">
@@ -174,6 +182,22 @@ export default function AdminPaymentComponent() {
             </SelectContent>
           </Select>
         </div>
+
+        {/* Payment Method Filter */}
+        <div className="flex flex-col">
+          <label className="text-sm font-medium mb-1">Payment Method</label>
+          <Select value={filterPaymentMethod} onValueChange={setFilterPaymentMethod}>
+            <SelectTrigger className="w-[150px] h-10 text-sm">
+              <SelectValue placeholder="All Methods" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="All">All</SelectItem>
+              <SelectItem value="Cash">Cash</SelectItem>
+              <SelectItem value="GCash">Digital</SelectItem>
+              {/* Add more methods as needed */}
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
       {/* Table */}
@@ -181,10 +205,7 @@ export default function AdminPaymentComponent() {
         <Table className="w-full table-auto p-5">
           <TableHeader>
             <TableRow className="[&>*]:whitespace-nowrap hover:bg-background">
-              {/* ID column */}
               <TableHead className="w-[80px] sm:w-[120px]">ID</TableHead>
-
-              {/* Hide these on mobile */}
               <TableHead className="hidden md:table-cell w-[150px] md:w-[200px]">
                 Full Name
               </TableHead>
@@ -197,11 +218,10 @@ export default function AdminPaymentComponent() {
               <TableHead className="hidden md:table-cell w-[60px] md:w-[75px] text-center">
                 Year
               </TableHead>
-
-              {/* Always visible */}
               <TableHead className="w-[100px] sm:w-[150px] text-center">
                 Payment Method
               </TableHead>
+              <TableHead className="w-[120px] sm:w-[150px] text-center">Reference Code</TableHead>
               <TableHead className="w-[100px] sm:w-[150px] text-center">
                 Status
               </TableHead>
@@ -215,8 +235,6 @@ export default function AdminPaymentComponent() {
                   <TableCell className="px-2 sm:px-3 py-2">
                     {payment.user?.id || "N/A"}
                   </TableCell>
-
-                  {/* Hidden on mobile */}
                   <TableCell className="hidden md:table-cell px-2 sm:px-3 py-2">
                     {payment.user?.name}
                   </TableCell>
@@ -230,9 +248,17 @@ export default function AdminPaymentComponent() {
                     {payment.user?.year}
                   </TableCell>
 
-                  {/* Always visible */}
                   <TableCell className="px-2 sm:px-3 py-2 text-center">
-                    {payment.paymentMethod}
+                    {payment.paymentMethod
+                      ? payment.paymentMethod.toLowerCase() === "cash"
+                        ? "Cash"
+                        : payment.paymentMethod.toLowerCase() === "digital"
+                          ? "Digital"
+                          : payment.paymentMethod
+                      : "N/A"}
+                  </TableCell>
+                  <TableCell className="px-2 sm:px-3 py-2 text-center">
+                    {payment.transactionId || "N/A"}
                   </TableCell>
                   <TableCell className="px-2 sm:px-3 py-2 text-center">
                     <div className="flex justify-center">

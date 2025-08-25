@@ -14,9 +14,8 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<LoginPage />} />
-        {/* will be a default route */}
-        <Route path="/landing-page" element={<LandingPage />} />
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/payment-option" element={<PaymentOptionPage />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />

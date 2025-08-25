@@ -15,11 +15,12 @@ export async function authorize(){
   if (!token) return false;
 
   try {
-    const res = await axios.get(`${API_URL}/auth/authorize`, {
+    const res = await axios.post(`${API_URL}/auth/authorize`, {},{
       headers: {
         Authorization: `Bearer ${token}`
       }
     });
+    console.log("Authorization response:", res.data);
     return res.data.authorized;
   } catch (error) {
     console.error("Authorization error:", error);

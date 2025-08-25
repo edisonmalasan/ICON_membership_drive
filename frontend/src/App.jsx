@@ -12,6 +12,8 @@ import TermsPolicyPage from "./components/pages/TermsPolicyPage";
 import RequireMemberData from "./util/RequireMemberData";
 import VerificationPendingPage from "./components/pages/VerificationPage";
 import { RestrictAdmin } from "./util/RestrictAdmin";
+import RedirectPaid from "./util/RedirectPaid";
+import { RedirectMemberFilled } from "./util/RequireMemberData";
 
 
 function App() {
@@ -20,8 +22,8 @@ function App() {
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup" element={<SignupPage />} />
-        <Route path="/renewal" element={<SignupPage type="renewal" />} />
+        <Route path="/signup" element={<RedirectPaid><RedirectMemberFilled><SignupPage /></RedirectMemberFilled></RedirectPaid>} />
+        <Route path="/renewal" element={<RedirectPaid><RedirectMemberFilled><SignupPage type="renewal" /></RedirectMemberFilled></RedirectPaid>} />
         <Route path="/payment-option" element={<RequireMemberData><PaymentOptionPage /></RequireMemberData>} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/manage-payments" element={<RestrictAdmin><ManagePaymentsPage /></RestrictAdmin>} />
@@ -29,7 +31,7 @@ function App() {
         <Route path="/account-creation" element={<RestrictAdmin><AccountCreationPage /></RestrictAdmin>} />
         <Route path="/home" element={<Home />} />
         <Route path="/terms-policy" element={<TermsPolicyPage />} />
-        <Route path="verification" element={<VerificationPendingPage/>} />
+        <Route path="/check-your-email" element={<VerificationPendingPage/>} />
         <Route path="*" element={<div>404 Not Found</div>} />
       </Routes>
     </Router>

@@ -9,7 +9,7 @@ import Dashboard from "./components/pages/Dashboard";
 import Home from "./components/pages/HomePage";
 import AccountCreationPage from "./components/pages/AccountCreationPage";
 import TermsPolicyPage from "./components/pages/TermsPolicyPage";
-
+import RequireMemberData from "./util/RequireMemberData";
 function App() {
   return (
     <Router>
@@ -17,7 +17,7 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
-        <Route path="/payment-option" element={<PaymentOptionPage />} />
+        <Route path="/payment-option" element={<RequireMemberData><PaymentOptionPage /></RequireMemberData>} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/manage-payments" element={<ManagePaymentsPage />} />
         <Route path="/dashboard" element={<Dashboard />} />

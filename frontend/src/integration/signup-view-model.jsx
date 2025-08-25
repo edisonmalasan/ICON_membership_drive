@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios, {AxiosError} from "axios";
+import {useNavigate} from "react-router-dom";
 
 export function useSignupViewModel() {
   const [form, setForm] = useState({
@@ -9,6 +10,8 @@ export function useSignupViewModel() {
     course:"",
     year:""
   });
+
+  const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
   const [responseMessage, setResponseMessage] = useState("");
@@ -27,6 +30,8 @@ export function useSignupViewModel() {
       const response = await axios.post("http://localhost:3000/api/v2/members", form);
       setResponseMessage("Account created successfully!");
       console.log("API response:", response.data);
+      localStorage.setItem("memberData", JSON.stringify(response.data));
+      navigate('/payment-option');
     } catch (error) {
       console.log(error instanceof AxiosError)
       if (error instanceof AxiosError) {

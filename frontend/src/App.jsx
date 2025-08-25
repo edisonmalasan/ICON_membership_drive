@@ -11,6 +11,9 @@ import AccountCreationPage from "./components/pages/AccountCreationPage";
 import TermsPolicyPage from "./components/pages/TermsPolicyPage";
 import RequireMemberData from "./util/RequireMemberData";
 import VerificationPendingPage from "./components/pages/VerificationPage";
+import { RestrictAdmin } from "./util/RestrictAdmin";
+
+
 function App() {
   return (
     <Router>
@@ -21,9 +24,9 @@ function App() {
         <Route path="/renewal" element={<SignupPage type="renewal" />} />
         <Route path="/payment-option" element={<RequireMemberData><PaymentOptionPage /></RequireMemberData>} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-        <Route path="/manage-payments" element={<ManagePaymentsPage />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/account-creation" element={<AccountCreationPage />} />
+        <Route path="/manage-payments" element={<RestrictAdmin><ManagePaymentsPage /></RestrictAdmin>} />
+        <Route path="/dashboard" element={<RestrictAdmin><Dashboard /></RestrictAdmin>} />
+        <Route path="/account-creation" element={<RestrictAdmin><AccountCreationPage /></RestrictAdmin>} />
         <Route path="/home" element={<Home />} />
         <Route path="/terms-policy" element={<TermsPolicyPage />} />
         <Route path="verification" element={<VerificationPendingPage/>} />

@@ -10,6 +10,23 @@ export async function login(email, password) {
   return res.data;
 }
 
+export async function authorize(){
+  const token = localStorage.getItem("token");
+  if (!token) return false;
+
+  try {
+    const res = await axios.get(`${API_URL}/auth/authorize`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    return res.data.authorized;
+  } catch (error) {
+    console.error("Authorization error:", error);
+    return false;
+  }
+}
+
 export function getToken() {
   return localStorage.getItem("token");
 }

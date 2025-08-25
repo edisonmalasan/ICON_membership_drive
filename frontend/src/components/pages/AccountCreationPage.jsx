@@ -2,6 +2,14 @@
 
 import { AppSidebar } from "@/components/app-sidebar";
 import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogFooter,
+    DialogTrigger,
+} from "@/components/ui/dialog";
+import {
     Breadcrumb,
     BreadcrumbItem,
     BreadcrumbLink,
@@ -28,37 +36,93 @@ import { Button } from "@/components/ui/button";
 import { PasswordInput } from "@/components/ui/password-input";
 import { Card, CardContent } from "@/components/ui/card";
 import { useState } from "react";
+import api from "@/api/axios";
+import { DialogDescription } from "@radix-ui/react-dialog";
 
 export default function AccountCreationPage() {
+    const [open, setOpen] = useState(false);
+
     const [formData, setFormData] = useState({
         name: "",
         id: "",
         email: "",
         password: "",
-        role: "User",
+        role: "Member",
         course: "CS",
         year: "1st",
-        paymentStatus: "Pending"
+        paymentStatus: "",
+        paymentMethod: "",
+        amountPaid: "",
+        referenceCode: "",
+        remarks: "",
     });
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("New Account Created:", formData);
-        alert("Account created successfully (mock).");
-        setFormData({
-            name: "",
-            id: "",
-            email: "",
-            password: "",
-            role: "User",
-            course: "CS",
-            year: "1st",
-            paymentStatus: "Pending"
-        });
+
+        try {
+            const memberPayload = {
+                id: formData.id,
+                name: formData.name,
+                email: formData.email,
+                password: formData.password,
+                role: formData.role.toLowerCase(),
+                course: formData.course,
+                year: Number(formData.year.replace(/\D/g, "")),
+            };
+
+            const memberRes = await api.post("/members", memberPayload, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+            });
+
+            const newMember = memberRes.data;
+            console.log("Member created:", newMember);
+
+            if (formData.paymentStatus || formData.amountPaid) {
+                const paymentPayload = {
+                    user: newMember._id,
+                    amount: Number(formData.amountPaid) || 0,
+                    status: formData.paymentStatus || "Unpaid",
+                    paymentMethod: formData.paymentMethod || "Cash",
+                    transactionId: formData.paymentMethod === "Digital"
+                        ? formData.referenceCode || `MANUAL-${Date.now()}`
+                        : `CASH-${Date.now()}`,
+                    remarks: formData.remarks || "manual_account_creation",
+                };
+
+                const paymentRes = await api.post("/payments", paymentPayload, {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    },
+                });
+
+                console.log("Payment created:", paymentRes.data);
+            }
+
+    
+
+            // reset form
+            setFormData({
+                name: "",
+                id: "",
+                email: "",
+                password: "",
+                role: "Member",
+                course: "CS",
+                year: "1st",
+                paymentStatus: "",
+                amountPaid: "",
+                remarks: "",
+            });
+        } catch (error) {
+            console.error("Error creating account:", error.response?.data || error.message);
+        }
     };
 
     return (
@@ -105,7 +169,6 @@ export default function AccountCreationPage() {
                                             onChange={handleChange}
                                             placeholder="Enter full name"
                                             required
-                                            size="sm"
                                         />
                                     </div>
 
@@ -120,7 +183,6 @@ export default function AccountCreationPage() {
                                             placeholder="XXXXXXX"
                                             maxLength={7}
                                             required
-                                            size="sm"
                                         />
                                     </div>
 
@@ -135,7 +197,6 @@ export default function AccountCreationPage() {
                                             onChange={handleChange}
                                             placeholder="m@slu.edu.ph"
                                             required
-                                            size="sm"
                                         />
                                     </div>
 
@@ -146,8 +207,6 @@ export default function AccountCreationPage() {
                                             id="password"
                                             value={formData.password}
                                             onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                                            required
-                                            size="sm"
                                         />
                                     </div>
 
@@ -173,8 +232,8 @@ export default function AccountCreationPage() {
                                                 <Button variant="outline" className="w-full justify-between h-8">{formData.course}</Button>
                                             </DropdownMenuTrigger>
                                             <DropdownMenuContent align="start" className="w-[var(--radix-dropdown-menu-trigger-width)]">
-                                                <DropdownMenuItem onClick={() => setFormData({ ...formData, course: "CS" })}>CS</DropdownMenuItem>
-                                                <DropdownMenuItem onClick={() => setFormData({ ...formData, course: "IT" })}>IT</DropdownMenuItem>
+                                                <DropdownMenuItem onClick={() => setFormData({ ...formData, course: "CS" })}>BSCS</DropdownMenuItem>
+                                                <DropdownMenuItem onClick={() => setFormData({ ...formData, course: "IT" })}>BSIT</DropdownMenuItem>
                                             </DropdownMenuContent>
                                         </DropdownMenu>
                                     </div>
@@ -190,28 +249,119 @@ export default function AccountCreationPage() {
                                                 <DropdownMenuItem onClick={() => setFormData({ ...formData, year: "1st" })}>1st</DropdownMenuItem>
                                                 <DropdownMenuItem onClick={() => setFormData({ ...formData, year: "2nd" })}>2nd</DropdownMenuItem>
                                                 <DropdownMenuItem onClick={() => setFormData({ ...formData, year: "3rd" })}>3rd</DropdownMenuItem>
+                                                <DropdownMenuItem onClick={() => setFormData({ ...formData, year: "3rd" })}>4th</DropdownMenuItem>
                                             </DropdownMenuContent>
                                         </DropdownMenu>
                                     </div>
 
-                                    {/* Payment Status */}
+                                    {/* Payment Status (Optional) */}
                                     <div className="flex flex-col gap-4">
-                                        <Label htmlFor="paymentStatus">Payment Status</Label>
+                                        <Label htmlFor="paymentStatus">Payment Status (Optional)</Label>
                                         <DropdownMenu>
                                             <DropdownMenuTrigger asChild>
-                                                <Button variant="outline" className="w-full justify-between h-8">{formData.paymentStatus}</Button>
+                                                <Button variant="outline" className="w-full justify-between h-8">
+                                                    {formData.paymentStatus || "Select"}
+                                                </Button>
                                             </DropdownMenuTrigger>
                                             <DropdownMenuContent align="start" className="w-[var(--radix-dropdown-menu-trigger-width)]">
-                                                <DropdownMenuItem onClick={() => setFormData({ ...formData, paymentStatus: "Unpaid" })}>Unpaid</DropdownMenuItem>
-                                                <DropdownMenuItem onClick={() => setFormData({ ...formData, paymentStatus: "Pending" })}>Pending</DropdownMenuItem>
+                                                <DropdownMenuItem onClick={() => setFormData({ ...formData, paymentStatus: "Unpaid", paymentMethod: "", amountPaid: "", referenceCode: "" })}>Unpaid</DropdownMenuItem>
+                                                <DropdownMenuItem onClick={() => setFormData({ ...formData, paymentStatus: "Pending", paymentMethod: "", amountPaid: "", referenceCode: "" })}>Pending</DropdownMenuItem>
                                                 <DropdownMenuItem onClick={() => setFormData({ ...formData, paymentStatus: "Paid" })}>Paid</DropdownMenuItem>
                                             </DropdownMenuContent>
                                         </DropdownMenu>
                                     </div>
 
+                                    {/* Show only if Paid */}
+                                    {formData.paymentStatus === "Paid" && (
+                                        <>
+                                            {/* Payment Method */}
+                                            <div className="flex flex-col gap-4">
+                                                <Label htmlFor="paymentMethod">Payment Method</Label>
+                                                <DropdownMenu>
+                                                    <DropdownMenuTrigger asChild>
+                                                        <Button variant="outline" className="w-full justify-between h-8">
+                                                            {formData.paymentMethod || "Select"}
+                                                        </Button>
+                                                    </DropdownMenuTrigger>
+                                                    <DropdownMenuContent align="start" className="w-[var(--radix-dropdown-menu-trigger-width)]">
+                                                        <DropdownMenuItem onClick={() => setFormData({ ...formData, paymentMethod: "Cash", referenceCode: "" })}>
+                                                            Cash
+                                                        </DropdownMenuItem>
+                                                        <DropdownMenuItem onClick={() => setFormData({ ...formData, paymentMethod: "Digital" })}>
+                                                            Digital
+                                                        </DropdownMenuItem>
+                                                    </DropdownMenuContent>
+                                                </DropdownMenu>
+                                            </div>
+
+                                            {/* Amount Paid */}
+                                            <div className="flex flex-col gap-4">
+                                                <Label htmlFor="amountPaid">Amount Paid</Label>
+                                                <Input
+                                                    id="amountPaid"
+                                                    name="amountPaid"
+                                                    type="number"
+                                                    value={formData.amountPaid}
+                                                    onChange={handleChange}
+                                                    placeholder="Enter amount"
+                                                    className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                                />
+                                            </div>
+
+                                            {/* Reference Code - show only if Digital */}
+                                            {formData.paymentMethod === "Digital" && (
+                                                <div className="flex flex-col gap-4">
+                                                    <Label htmlFor="referenceCode">Reference Code / Transaction ID</Label>
+                                                    <Input
+                                                        id="referenceCode"
+                                                        name="referenceCode"
+                                                        value={formData.referenceCode || ""}
+                                                        onChange={handleChange}
+                                                        placeholder="Enter reference code"
+                                                    />
+                                                </div>
+                                            )}
+                                        </>
+                                    )}
+
+                                    {/* Remarks */}
+                                    <div className="flex flex-col gap-4 col-span-2">
+                                        <Label htmlFor="remarks">Remarks</Label>
+                                        <Input
+                                            id="remarks"
+                                            name="remarks"
+                                            value={formData.remarks}
+                                            onChange={handleChange}
+                                            placeholder="Enter remarks"
+                                        />
+                                    </div>
+
                                     {/* Submit Button */}
                                     <div className="col-span-2">
-                                        <Button type="submit" className="w-full h-10">Create Account</Button>
+                                        <Dialog open={open} onOpenChange={setOpen}>
+                                            <DialogTrigger asChild>
+                                                <Button type="button" className="w-full h-10">Create Account</Button>
+                                            </DialogTrigger>
+                                            <DialogContent>
+                                                <DialogHeader>
+                                                    <DialogTitle>Are you sure?</DialogTitle>
+                                                </DialogHeader>
+                                                <DialogDescription>
+                                                    This will create a new account with the details you entered.
+                                                </DialogDescription>
+                                                <DialogFooter className="flex justify-end gap-2">
+                                                    <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
+                                                    <Button
+                                                        onClick={(e) => {
+                                                            setOpen(false);
+                                                            handleSubmit(e);
+                                                        }}
+                                                    >
+                                                        Confirm
+                                                    </Button>
+                                                </DialogFooter>
+                                            </DialogContent>
+                                        </Dialog>
                                     </div>
                                 </form>
                             </CardContent>

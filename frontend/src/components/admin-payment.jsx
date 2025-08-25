@@ -40,7 +40,7 @@ export default function AdminPaymentComponent() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // ✅ Fetch payments on mount
+  // Fetch payments on mount
   useEffect(() => {
     const fetchPayments = async () => {
       try {
@@ -58,7 +58,7 @@ export default function AdminPaymentComponent() {
     fetchPayments();
   }, []);
 
-  // ✅ Confirm status change + call API
+
   const confirmStatusChange = async () => {
     if (selectedPayment && newStatus) {
       try {
@@ -90,7 +90,7 @@ export default function AdminPaymentComponent() {
     setIsDialogOpen(true);
   };
 
-  // ✅ Filtering logic
+
   const filteredPayments = payments.filter((payment) => {
     const matchesSearch =
       payment.user?.id?.toLowerCase().includes(search.toLowerCase()) ||

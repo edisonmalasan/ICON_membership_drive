@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import axios, {AxiosError} from "axios";
 
 export function useSignupViewModel() {
   const [form, setForm] = useState({
@@ -13,10 +13,10 @@ export function useSignupViewModel() {
   const [loading, setLoading] = useState(false);
   const [responseMessage, setResponseMessage] = useState("");
 
-  // const handleChange = (e) => {
-  //   const { id, value } = e.target;
-  //   setForm((prev) => ({ ...prev, [id]: value }));
-  // };
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+    setForm((prev) => ({ ...prev, [id]: value }));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -28,6 +28,16 @@ export function useSignupViewModel() {
       setResponseMessage("Account created successfully!");
       console.log("API response:", response.data);
     } catch (error) {
+      console.log(error instanceof AxiosError)
+      if (error instanceof AxiosError) {
+        if (error.response && error.response.status === 409) {
+          setResponseMessage("Error: Email already exists");
+          return;
+        } else {
+          setResponseMessage("Error creating account: " + (error.response?.data?.error || error.message));
+          return;
+        }
+      }
       setResponseMessage("Error creating account");
       console.error(error);
     } finally {
@@ -39,7 +49,7 @@ export function useSignupViewModel() {
     form,
     loading,
     responseMessage,
-    // handleChange,
+    handleChange,
     handleSubmit,
   };
 }

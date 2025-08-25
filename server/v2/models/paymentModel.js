@@ -12,14 +12,14 @@ const paymentSchema = mongoose.Schema({
   },
   paymentMethod: {
     type: String,
-    enum: ["Cash", "Digital"],
+    enum: ["cash", "digital"],
   },
   status: {
     type: String,
     required: true,
     enum: ["Unpaid", "Paid", "Pending"],
     default: function () {
-      if (this.paymentMethod === "Digital") {
+      if (this.paymentMethod === "digital") {
         return "Pending";
       }else{
         return "Unpaid";

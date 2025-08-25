@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/dialog";
 import{usePaymentViewModel}from "@/integration/payment-view-model"
 
-export default function PaymentForm() {
+export default function PaymentForm(memberData) {
   const {
     form,
     loading,
@@ -33,6 +33,7 @@ export default function PaymentForm() {
 
   const [selectedPayment, setSelectedPayment] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [referenceCode, setReferenceCode] = useState("");
 
   const qrCodes = {
     maya: "https://img.freepik.com/free-vector/scan-me-qr-code_78370-9714.jpg?semt=ais_hybrid&w=740&q=80",
@@ -42,6 +43,36 @@ export default function PaymentForm() {
   const accountNumbers = {
     maya: "Maya Account: 09294030531",
     gcash: "GCash Account: 09294030531",
+  };
+
+  const handleReferenceCodeChange = (e) => {
+    setReferenceCode(e.target.value);
+  };
+
+  const handleConfirmPayment = () => {
+    if (!referenceCode.trim()) {
+      alert("Please enter a reference code");
+      return;
+    }
+    
+    // Handle payment confirmation with reference code
+    console.log("Payment confirmed with reference code:", referenceCode);
+    console.log("Payment method:", selectedPayment);
+    console.log(memberData.memberData._id);
+
+    const paymentData = {
+      user: memberData.memberData._id,
+      amount: 120,
+      paymentMethod: selectedPayment,
+      transactionId: referenceCode,
+      remarks: "membership_2025"
+    }
+
+    console.log(paymentData);
+    handleSubmit(paymentData);
+
+    setIsDialogOpen(false);
+    setReferenceCode("");
   };
 
   return (
@@ -54,10 +85,10 @@ export default function PaymentForm() {
               <div className="p-6 md:p-8 flex flex-col justify-center">
                 <CardHeader className="text-center mb-6 p-0">
                   <CardTitle className="text-2xl font-bold">
-                    Payment Method
+                    Hi {memberData.memberData.name}
                   </CardTitle>
                   <CardDescription>
-                    Select your preferred mobile payment method.
+                    Select your preferred payment method to complete your registration.
                   </CardDescription>
                 </CardHeader>
 
@@ -66,28 +97,28 @@ export default function PaymentForm() {
                   onValueChange={setSelectedPayment}
                   className="grid grid-cols-2 gap-4 mt-4"
                 >
-                  {/* Maya */}
+                  {/* Cash */}
                   <Label
-                    htmlFor="maya"
-                    className={`cursor-pointer border-2 rounded-lg flex items-center justify-center p-6 font-semibold transition-all hover:shadow-md ${selectedPayment === "maya"
+                    htmlFor="cash"
+                    className={`cursor-pointer border-2 rounded-lg flex items-center justify-center p-6 font-semibold transition-all hover:shadow-md ${selectedPayment === "cash"
                       ? "border-[#00CC66] bg-[#E6F9F0] dark:bg-[#004D33] text-[#00A652]"
                       : "border-neutral-600bg-muted dark:bg-muted"
                       }`}
                   >
-                    <RadioGroupItem value="maya" id="maya" className="sr-only" />
-                    Maya
+                    <RadioGroupItem value="cash" id="cash" className="sr-only" />
+                    Cash
                   </Label>
 
-                  {/* GCash */}
+                  {/* Digital */}
                   <Label
-                    htmlFor="gcash"
-                    className={`cursor-pointer border-2 rounded-lg flex items-center justify-center p-6 font-semibold transition-all hover:shadow-md ${selectedPayment === "gcash"
+                    htmlFor="digital"
+                    className={`cursor-pointer border-2 rounded-lg flex items-center justify-center p-6 font-semibold transition-all hover:shadow-md ${selectedPayment === "digital"
                       ? "border-[#0077FF] bg-[#E6F2FF] dark:bg-[#003366] text-[#1c86ff]"
                       : "border-neutral-600 bg-muted dark:bg-muted"
                       }`}
                   >
-                    <RadioGroupItem value="gcash" id="gcash" className="sr-only" />
-                    GCash
+                    <RadioGroupItem value="digital" id="digital" className="sr-only" />
+                    Digital
                   </Label>
                 </RadioGroup>
 
@@ -122,36 +153,62 @@ export default function PaymentForm() {
                   Complete Your Payment
                 </DialogTitle>
                 <DialogDescription className="text-center text-sm">
-                  Scan the QR code or use the account number below and upload your
-                  payment screenshot to confirm.
+                  {selectedPayment === "cash" 
+                    ? "Pay in person and enter the reference code provided by the cashier."
+                    : "Scan the QR code or use the account number below, then enter your transaction reference code."
+                  }
                 </DialogDescription>
               </DialogHeader>
 
               <div className="grid gap-4 m-4 justify-items-center">
-                <img
-                  src={qrCodes[selectedPayment]}
-                  alt={`${selectedPayment} QR`}
-                  className="w-64 h-64 object-contain"
-                />
-                <p className="text-center m-2 font-medium">
-                  {accountNumbers[selectedPayment]}
-                </p>
+                {selectedPayment === "digital" && (
+                  <>
+                    <img
+                      src={qrCodes[selectedPayment]}
+                      alt={`${selectedPayment} QR`}
+                      className="w-64 h-64 object-contain"
+                    />
+                    <p className="text-center m-2 font-medium">
+                      {accountNumbers[selectedPayment]}
+                    </p>
+                  </>
+                )}
+
+                {selectedPayment === "cash" && (
+                  <div className="text-center p-8">
+                    <div className="text-6xl mb-4">💵</div>
+                    <p className="font-medium text-lg">Cash Payment</p>
+                    <p className="text-sm text-muted-foreground mt-2">
+                      Pay at the ICON office and get your reference code
+                    </p>
+                  </div>
+                )}
 
                 <div className="grid gap-2 text-center w-full">
-                  <Label className="block text-center" htmlFor="screenshot">
-                    Upload Payment Screenshot
+                  <Label className="block text-center" htmlFor="referenceCode">
+                    Enter Reference Code
                   </Label>
-                  <Input type="file" id="screenshot" accept="image/*" className="w-full" />
+                  <Input 
+                    type="text" 
+                    id="referenceCode"
+                    placeholder={selectedPayment === "cash" ? "Cash receipt code" : "Transaction reference number"}
+                    value={referenceCode}
+                    onChange={handleReferenceCodeChange}
+                    className="w-full text-center"
+                  />
                 </div>
+
                 <DialogFooter className="w-full">
                   <Button
                     className="mt-4 text-md w-full"
-                    onClick={() => setIsDialogOpen(false)}
+                    onClick={handleConfirmPayment}
+                    disabled={!referenceCode.trim()}
                   >
                     Confirm Payment
                   </Button>
                 </DialogFooter>
               </div>
+
               <DialogDescription className="text-center text-xs mt-4">
                 Note: Your payment will be verified within 24 hours. You&apos;ll
                 receive a confirmation email once approved.

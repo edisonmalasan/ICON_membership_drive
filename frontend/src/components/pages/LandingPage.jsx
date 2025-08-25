@@ -157,7 +157,7 @@ export default function LandingPage() {
                         </div>
 
                         {/* divider */}
-                        <div className="w-full h-px bg-gray-300 my-12"></div>
+                        <div className="w-full h-px bg-gray-400 my-12"></div>
 
                         <div className="flex flex-row items-start justify-between gap-20">
                           <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 mb-6">
@@ -252,7 +252,7 @@ export default function LandingPage() {
                   <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white">
                     <TypewriterEffectSmooth words={words} />
                   </h2>
-                  <p className="text-xs md:text-base text-gray-300 max-w-3xl mb-16">
+                  <p className="text-sm sm:text-base md:text-base lg:text-lg xl:text-xl text-gray-300 max-w-3xl md:mb-5 lg:mb-10 ">
                     Explore our community from past events and activities
                   </p>
                 </div>
@@ -279,7 +279,7 @@ export default function LandingPage() {
                                 alt={item.title}
                                 height="1000"
                                 width="1000"
-                                className="rounded-lg mb-6 sm:mb-8 md:mb-4 lg:mb-10 object-cover w-full h-60 sm:h-70 md:h-80 lg:h-96 xl:h-[42rem]"
+                                className="rounded-lg mb-6 sm:mb-8 md:mb-4 lg:mb-10 object-cover w-full h-60 sm:h-70 md:h-80 lg:h-96 xl:h-[41rem]"
                               />
                             )}
                             <div className="text-gray-300 leading-relaxed">

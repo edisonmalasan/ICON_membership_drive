@@ -26,20 +26,23 @@ export const hoverData = [
 export const words = [
   {
     text: "Our",
-    className: "text-black dark:text-white text-4xl md:text-5xl lg:text-6xl",
+    className:
+      "text-black dark:text-white text-3xl sm:text-5xl md:text-5xl lg:text-6xl xl:text-7xl",
   },
   {
     text: "Events",
-    className: "text-black dark:text-white text-4xl md:text-5xl lg:text-6xl",
+    className:
+      "text-black dark:text-white text-3xl sm:text-5xl md:text-5xl lg:text-6xl xl:text-7xl",
   },
   {
     text: "in",
-    className: "text-black dark:text-white text-4xl md:text-5xl lg:text-6xlk",
+    className:
+      "text-black dark:text-white text-3xl sm:text-5xl md:text-5xl lg:text-6xl xl:text-7xl",
   },
   {
     text: "Pictures.",
     className:
-      "text-[#54AC45] dark:text-[#54AC45] text-4xl md:text-5xl lg:text-6xl",
+      "text-[#54AC45] dark:text-[#54AC45] text-3xl sm:text-5xl md:text-5xl lg:text-6xl xl:text-7xl",
   },
 ];
 

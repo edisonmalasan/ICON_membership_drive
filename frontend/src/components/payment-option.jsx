@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/dialog";
 import{usePaymentViewModel}from "@/integration/payment-view-model"
 
-export default function PaymentForm() {
+export default function PaymentForm(memberData) {
   const {
     form,
     loading,
@@ -54,10 +54,10 @@ export default function PaymentForm() {
               <div className="p-6 md:p-8 flex flex-col justify-center">
                 <CardHeader className="text-center mb-6 p-0">
                   <CardTitle className="text-2xl font-bold">
-                    Payment Method
+                    Hi {memberData.memberData.name}
                   </CardTitle>
                   <CardDescription>
-                    Select your preferred mobile payment method.
+                    Select your preferred payment method to complete your registration.
                   </CardDescription>
                 </CardHeader>
 
@@ -68,26 +68,26 @@ export default function PaymentForm() {
                 >
                   {/* Maya */}
                   <Label
-                    htmlFor="maya"
-                    className={`cursor-pointer border-2 rounded-lg flex items-center justify-center p-6 font-semibold transition-all hover:shadow-md ${selectedPayment === "maya"
+                    htmlFor="cash"
+                    className={`cursor-pointer border-2 rounded-lg flex items-center justify-center p-6 font-semibold transition-all hover:shadow-md ${selectedPayment === "cash"
                       ? "border-[#00CC66] bg-[#E6F9F0] dark:bg-[#004D33] text-[#00A652]"
                       : "border-neutral-600bg-muted dark:bg-muted"
                       }`}
                   >
-                    <RadioGroupItem value="maya" id="maya" className="sr-only" />
-                    Maya
+                    <RadioGroupItem value="cash" id="cash" className="sr-only" />
+                    Cash
                   </Label>
 
                   {/* GCash */}
                   <Label
-                    htmlFor="gcash"
-                    className={`cursor-pointer border-2 rounded-lg flex items-center justify-center p-6 font-semibold transition-all hover:shadow-md ${selectedPayment === "gcash"
+                    htmlFor="digital"
+                    className={`cursor-pointer border-2 rounded-lg flex items-center justify-center p-6 font-semibold transition-all hover:shadow-md ${selectedPayment === "digital"
                       ? "border-[#0077FF] bg-[#E6F2FF] dark:bg-[#003366] text-[#1c86ff]"
                       : "border-neutral-600 bg-muted dark:bg-muted"
                       }`}
                   >
-                    <RadioGroupItem value="gcash" id="gcash" className="sr-only" />
-                    GCash
+                    <RadioGroupItem value="digital" id="digital" className="sr-only" />
+                    Digital
                   </Label>
                 </RadioGroup>
 

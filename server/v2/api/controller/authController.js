@@ -1,4 +1,5 @@
 const { authenticate } = require('../../services/authService.js');
+const {verifyToken} = require('../../utils/jwtUtil.js');
 
 async function handleLogin(req, res) {
     if (!req.body) {
@@ -31,6 +32,31 @@ async function handleLogin(req, res) {
     }
 }
 
+async function handleAuthorize(req, res) {
+    console.log("hit")
+    const token = req.headers['authorization']?.split(' ')[1];
+    if (!token) {
+        return res.status(401).json({
+            message: 'Authorization token is required.'
+        });
+    }
+
+    try {
+        const memberData = await verifyToken(token);
+        console.log("success")
+        res.status(200).json({
+            message: 'Authorization successful',
+            authorized: true
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(401).json({
+            message: error.message
+        });
+    }
+}
+
 module.exports = {
-    handleLogin
+    handleLogin,
+    handleAuthorize
 }                                                           

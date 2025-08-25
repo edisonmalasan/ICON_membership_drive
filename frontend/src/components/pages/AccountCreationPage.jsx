@@ -41,6 +41,7 @@ import { DialogDescription } from "@radix-ui/react-dialog";
 
 export default function AccountCreationPage() {
     const [open, setOpen] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
 
     const [formData, setFormData] = useState({
         name: "",
@@ -48,7 +49,7 @@ export default function AccountCreationPage() {
         email: "",
         password: "",
         role: "Member",
-        course: "CS",
+        course: "BSCS",
         year: "1st",
         paymentStatus: "",
         paymentMethod: "",
@@ -59,21 +60,30 @@ export default function AccountCreationPage() {
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
+        setErrorMessage("");
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        if (formData.role === "Admin" && formData.password.length < 6) {
+            setErrorMessage("Password must be at least 6 characters long.");
+            return;
+        }
+
         try {
             const memberPayload = {
                 id: formData.id,
-                name: formData.name,
                 email: formData.email,
-                password: formData.password,
+                name: formData.name,
                 role: formData.role.toLowerCase(),
                 course: formData.course,
                 year: Number(formData.year.replace(/\D/g, "")),
             };
+
+            if (formData.role === "Admin" || formData.password) {
+                memberPayload.password = formData.password;
+            }
 
             const memberRes = await api.post("/members", memberPayload, {
                 headers: {
@@ -89,10 +99,11 @@ export default function AccountCreationPage() {
                     user: newMember._id,
                     amount: Number(formData.amountPaid) || 0,
                     status: formData.paymentStatus || "Unpaid",
-                    paymentMethod: formData.paymentMethod || "Cash",
-                    transactionId: formData.paymentMethod === "Digital"
-                        ? formData.referenceCode || `MANUAL-${Date.now()}`
-                        : `CASH-${Date.now()}`,
+                    paymentMethod: (formData.paymentMethod || "Cash").toLowerCase(),
+                    transactionId:
+                        formData.paymentMethod === "Digital"
+                            ? formData.referenceCode || `DIGITAL-${Date.now()}`
+                            : `CASH-${Date.now()}`,
                     remarks: formData.remarks || "manual_account_creation",
                 };
 
@@ -105,23 +116,34 @@ export default function AccountCreationPage() {
                 console.log("Payment created:", paymentRes.data);
             }
 
-    
-
-            // reset form
             setFormData({
                 name: "",
-                id: "",
                 email: "",
+                id: "",
                 password: "",
                 role: "Member",
-                course: "CS",
+                course: "BSCS",
                 year: "1st",
                 paymentStatus: "",
                 amountPaid: "",
                 remarks: "",
             });
+            setErrorMessage("");
         } catch (error) {
-            console.error("Error creating account:", error.response?.data || error.message);
+            console.error(
+                "Error creating account:",
+                error.response?.data || error.message
+            );
+
+            if (error.response?.status === 500 || error.response?.status === 500) {
+                if (
+                    error.response.data?.error?.includes("id") ||
+                    error.response.data?.message?.includes("id")
+                ) {
+                    setErrorMessage("This ID is already registered.");
+                    return;
+                }
+            }
         }
     };
 
@@ -157,6 +179,9 @@ export default function AccountCreationPage() {
                                         <p className="text-muted-foreground text-xs">
                                             Create a user account manually if registration fails
                                         </p>
+                                        {errorMessage && (
+                                            <p className="text-red-600 text-xs mt-2">{errorMessage}</p>
+                                        )}
                                     </div>
 
                                     {/* Full Name */}
@@ -169,6 +194,7 @@ export default function AccountCreationPage() {
                                             onChange={handleChange}
                                             placeholder="Enter full name"
                                             required
+                                            className="h-10"
                                         />
                                     </div>
 
@@ -183,6 +209,7 @@ export default function AccountCreationPage() {
                                             placeholder="XXXXXXX"
                                             maxLength={7}
                                             required
+                                            className="h-10"
                                         />
                                     </div>
 
@@ -197,7 +224,22 @@ export default function AccountCreationPage() {
                                             onChange={handleChange}
                                             placeholder="m@slu.edu.ph"
                                             required
+                                            className="h-10"
                                         />
+                                    </div>
+
+                                    {/* Role */}
+                                    <div className="flex flex-col gap-4">
+                                        <Label htmlFor="role">Role</Label>
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger asChild>
+                                                <Button variant="outline" className="w-full justify-between h-10">{formData.role}</Button>
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent align="start" className="w-[var(--radix-dropdown-menu-trigger-width)]">
+                                                <DropdownMenuItem onClick={() => setFormData({ ...formData, role: "Member" })}>Member</DropdownMenuItem>
+                                                <DropdownMenuItem onClick={() => setFormData({ ...formData, role: "Admin" })}>Admin</DropdownMenuItem>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
                                     </div>
 
                                     {/* Password */}
@@ -207,33 +249,23 @@ export default function AccountCreationPage() {
                                             id="password"
                                             value={formData.password}
                                             onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                                            required={formData.role === "Admin"}
+                                            className="h-10"
                                         />
                                     </div>
 
-                                    {/* Role */}
-                                    <div className="flex flex-col gap-4">
-                                        <Label htmlFor="role">Role</Label>
-                                        <DropdownMenu>
-                                            <DropdownMenuTrigger asChild>
-                                                <Button variant="outline" className="w-full justify-between h-8">{formData.role}</Button>
-                                            </DropdownMenuTrigger>
-                                            <DropdownMenuContent align="start" className="w-[var(--radix-dropdown-menu-trigger-width)]">
-                                                <DropdownMenuItem onClick={() => setFormData({ ...formData, role: "Member" })}>Member</DropdownMenuItem>
-                                                <DropdownMenuItem onClick={() => setFormData({ ...formData, role: "Admin" })}>Admin</DropdownMenuItem>
-                                            </DropdownMenuContent>
-                                        </DropdownMenu>
-                                    </div>
 
                                     {/* Course */}
                                     <div className="flex flex-col gap-4">
                                         <Label htmlFor="course">Course</Label>
                                         <DropdownMenu>
                                             <DropdownMenuTrigger asChild>
-                                                <Button variant="outline" className="w-full justify-between h-8">{formData.course}</Button>
+                                                <Button variant="outline" className="w-full justify-between h-10">{formData.course}</Button>
                                             </DropdownMenuTrigger>
                                             <DropdownMenuContent align="start" className="w-[var(--radix-dropdown-menu-trigger-width)]">
-                                                <DropdownMenuItem onClick={() => setFormData({ ...formData, course: "CS" })}>BSCS</DropdownMenuItem>
-                                                <DropdownMenuItem onClick={() => setFormData({ ...formData, course: "IT" })}>BSIT</DropdownMenuItem>
+                                                <DropdownMenuItem onClick={() => setFormData({ ...formData, course: "BSCS" })}>BSCS</DropdownMenuItem>
+                                                <DropdownMenuItem onClick={() => setFormData({ ...formData, course: "BIST" })}>BSIT</DropdownMenuItem>
+                                                <DropdownMenuItem onClick={() => setFormData({ ...formData, course: "BIST" })}>BSMMA</DropdownMenuItem>
                                             </DropdownMenuContent>
                                         </DropdownMenu>
                                     </div>
@@ -243,13 +275,13 @@ export default function AccountCreationPage() {
                                         <Label htmlFor="year">Year</Label>
                                         <DropdownMenu>
                                             <DropdownMenuTrigger asChild>
-                                                <Button variant="outline" className="w-full justify-between h-8">{formData.year}</Button>
+                                                <Button variant="outline" className="w-full justify-between h-10">{formData.year}</Button>
                                             </DropdownMenuTrigger>
                                             <DropdownMenuContent align="start" className="w-[var(--radix-dropdown-menu-trigger-width)]">
                                                 <DropdownMenuItem onClick={() => setFormData({ ...formData, year: "1st" })}>1st</DropdownMenuItem>
                                                 <DropdownMenuItem onClick={() => setFormData({ ...formData, year: "2nd" })}>2nd</DropdownMenuItem>
                                                 <DropdownMenuItem onClick={() => setFormData({ ...formData, year: "3rd" })}>3rd</DropdownMenuItem>
-                                                <DropdownMenuItem onClick={() => setFormData({ ...formData, year: "3rd" })}>4th</DropdownMenuItem>
+                                                <DropdownMenuItem onClick={() => setFormData({ ...formData, year: "4th" })}>4th</DropdownMenuItem>
                                             </DropdownMenuContent>
                                         </DropdownMenu>
                                     </div>
@@ -259,8 +291,8 @@ export default function AccountCreationPage() {
                                         <Label htmlFor="paymentStatus">Payment Status (Optional)</Label>
                                         <DropdownMenu>
                                             <DropdownMenuTrigger asChild>
-                                                <Button variant="outline" className="w-full justify-between h-8">
-                                                    {formData.paymentStatus || "Select"}
+                                                <Button variant="outline" className="w-full justify-between h-10">
+                                                    {formData.paymentStatus || "Unpaid"}
                                                 </Button>
                                             </DropdownMenuTrigger>
                                             <DropdownMenuContent align="start" className="w-[var(--radix-dropdown-menu-trigger-width)]">
@@ -279,7 +311,7 @@ export default function AccountCreationPage() {
                                                 <Label htmlFor="paymentMethod">Payment Method</Label>
                                                 <DropdownMenu>
                                                     <DropdownMenuTrigger asChild>
-                                                        <Button variant="outline" className="w-full justify-between h-8">
+                                                        <Button variant="outline" className="w-full justify-between h-10">
                                                             {formData.paymentMethod || "Select"}
                                                         </Button>
                                                     </DropdownMenuTrigger>
@@ -304,20 +336,21 @@ export default function AccountCreationPage() {
                                                     value={formData.amountPaid}
                                                     onChange={handleChange}
                                                     placeholder="Enter amount"
-                                                    className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                                    className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none h-10"
                                                 />
                                             </div>
 
                                             {/* Reference Code - show only if Digital */}
                                             {formData.paymentMethod === "Digital" && (
                                                 <div className="flex flex-col gap-4">
-                                                    <Label htmlFor="referenceCode">Reference Code / Transaction ID</Label>
+                                                    <Label htmlFor="referenceCode">Reference Code</Label>
                                                     <Input
                                                         id="referenceCode"
                                                         name="referenceCode"
                                                         value={formData.referenceCode || ""}
                                                         onChange={handleChange}
                                                         placeholder="Enter reference code"
+                                                        className="h-10"
                                                     />
                                                 </div>
                                             )}
@@ -333,6 +366,7 @@ export default function AccountCreationPage() {
                                             value={formData.remarks}
                                             onChange={handleChange}
                                             placeholder="Enter remarks"
+                                            className="h-10"
                                         />
                                     </div>
 

@@ -63,13 +63,12 @@ export default function AdminPaymentComponent() {
     if (selectedPayment && newStatus) {
       try {
         const token = localStorage.getItem("token");
-        await api.patch(
+        await api.put(
           `/payments/${selectedPayment._id}`,
           { status: newStatus },
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
-        // Update local state after success
         setPayments((prev) =>
           prev.map((p) =>
             p._id === selectedPayment._id ? { ...p, status: newStatus } : p
@@ -137,8 +136,8 @@ export default function AdminPaymentComponent() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="All">All</SelectItem>
-              <SelectItem value="CS">CS</SelectItem>
-              <SelectItem value="IT">IT</SelectItem>
+              <SelectItem value="BSCS">BSCS</SelectItem>
+              <SelectItem value="BSIT">BSIT</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -179,44 +178,80 @@ export default function AdminPaymentComponent() {
 
       {/* Table */}
       <div className="overflow-x-auto max-h-[500px] overflow-y-auto scrollbar-thin scrollbar-thumb-neutral-500 scrollbar-track-neutral-800 mt-2">
-        <Table className="w-full min-w-[700px] table-auto p-5">
+        <Table className="w-full table-auto p-5">
           <TableHeader>
             <TableRow className="[&>*]:whitespace-nowrap hover:bg-background">
-              <TableHead className="w-[120px] sticky left-0 z-10">ID</TableHead>
-              <TableHead className="w-[200px]">Full Name</TableHead>
-              <TableHead className="w-[200px]">Email</TableHead>
-              <TableHead className="w-[150px] text-center">Payment Method</TableHead>
-              <TableHead className="w-[75px] text-center">Course</TableHead>
-              <TableHead className="w-[75px] text-center">Year</TableHead>
-              <TableHead className="w-[150px] text-center">Status</TableHead>
+              {/* ID column */}
+              <TableHead className="w-[80px] sm:w-[120px]">ID</TableHead>
+
+              {/* Hide these on mobile */}
+              <TableHead className="hidden md:table-cell w-[150px] md:w-[200px]">
+                Full Name
+              </TableHead>
+              <TableHead className="hidden md:table-cell w-[150px] md:w-[200px]">
+                Email
+              </TableHead>
+              <TableHead className="hidden md:table-cell w-[60px] md:w-[75px] text-center">
+                Course
+              </TableHead>
+              <TableHead className="hidden md:table-cell w-[60px] md:w-[75px] text-center">
+                Year
+              </TableHead>
+
+              {/* Always visible */}
+              <TableHead className="w-[100px] sm:w-[150px] text-center">
+                Payment Method
+              </TableHead>
+              <TableHead className="w-[100px] sm:w-[150px] text-center">
+                Status
+              </TableHead>
             </TableRow>
           </TableHeader>
+
           <TableBody className="text-xs">
             {filteredPayments.length ? (
               filteredPayments.map((payment) => (
                 <TableRow key={payment._id} className="text-md transition-colors">
-                  <TableCell className="px-3 py-2">{payment.user?.id || "N/A"}</TableCell>
-                  <TableCell className="px-3 py-2">{payment.user?.name}</TableCell>
-                  <TableCell className="px-3 py-2">{payment.user?.email}</TableCell>
-                  <TableCell className="px-3 py-2 text-center">{payment.paymentMethod}</TableCell>
-                  <TableCell className="px-3 py-2 text-center">{payment.user?.course}</TableCell>
-                  <TableCell className="px-3 py-2 text-center">{payment.user?.year}</TableCell>
-                  <TableCell className="px-3 py-2 text-center">
+                  <TableCell className="px-2 sm:px-3 py-2">
+                    {payment.user?.id || "N/A"}
+                  </TableCell>
+
+                  {/* Hidden on mobile */}
+                  <TableCell className="hidden md:table-cell px-2 sm:px-3 py-2">
+                    {payment.user?.name}
+                  </TableCell>
+                  <TableCell className="hidden md:table-cell px-2 sm:px-3 py-2">
+                    {payment.user?.email}
+                  </TableCell>
+                  <TableCell className="hidden md:table-cell px-2 sm:px-3 py-2 text-center">
+                    {payment.user?.course}
+                  </TableCell>
+                  <TableCell className="hidden md:table-cell px-2 sm:px-3 py-2 text-center">
+                    {payment.user?.year}
+                  </TableCell>
+
+                  {/* Always visible */}
+                  <TableCell className="px-2 sm:px-3 py-2 text-center">
+                    {payment.paymentMethod}
+                  </TableCell>
+                  <TableCell className="px-2 sm:px-3 py-2 text-center">
                     <div className="flex justify-center">
                       <Select
                         value={payment.status}
-                        onValueChange={(value) => handleStatusChange(payment, value)}
+                        onValueChange={(value) =>
+                          handleStatusChange(payment, value)
+                        }
                       >
                         <SelectTrigger
                           className={cn(
-                            "w-[120px] h-10 text-xs font-semibold border-1",
+                            "w-[100px] sm:w-[120px] h-9 sm:h-10 text-xs font-semibold border-1",
                             payment.status === "Unpaid"
                               ? "border-red-600 text-red-600"
                               : payment.status === "Pending"
-                              ? "border-yellow-600 text-yellow-600"
-                              : payment.status === "Paid"
-                              ? "border-green-600 text-green-600"
-                              : "border-gray-500 text-gray-500"
+                                ? "border-yellow-600 text-yellow-600"
+                                : payment.status === "Paid"
+                                  ? "border-green-600 text-green-600"
+                                  : "border-gray-500 text-gray-500"
                           )}
                         >
                           <SelectValue placeholder="Select status" />
@@ -233,8 +268,11 @@ export default function AdminPaymentComponent() {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={7} className="text-center py-4 text-white text-base">
-                  No payment submissions or no search results found.
+                <TableCell
+                  colSpan={7}
+                  className="text-center py-4 text-white text-base"
+                >
+                  No results found.
                 </TableCell>
               </TableRow>
             )}

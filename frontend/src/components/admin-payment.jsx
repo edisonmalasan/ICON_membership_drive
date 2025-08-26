@@ -184,7 +184,6 @@ export default function AdminPaymentComponent() {
         </div>
 
         {/* Payment Method Filter */}
-        {/* Payment Method Filter */}
         <div className="flex flex-col">
           <label className="text-sm font-medium mb-1">Payment Method</label>
           <Select value={filterPaymentMethod} onValueChange={setFilterPaymentMethod}>

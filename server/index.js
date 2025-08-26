@@ -16,15 +16,43 @@ const PORT = process.env.PORT || 3000;
 
 //Environment variable config
 dotenv.config({path:'./.env'})
+const allowedOrigins = [
+  "http://localhost:5173", // local dev frontend
+  "https://icon.lestat.cloud", // production frontend
+  "https://apicon.lestat.cloud", // ✅ Add HTTPS version (this is what NPM uses)
+  "http://apicon.lestat.cloud", // Keep HTTP for direct access
+];
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    console.log(`CORS check for origin: ${origin}`); // ✅ Add logging
+    // Allow requests with no origin (like mobile apps, curl, Postman)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      console.log(`CORS blocked origin: ${origin}`); // ✅ Log blocked origins
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization", "secret_key"],
+  credentials: true,
+  optionsSuccessStatus: 200, // ✅ Add this for preflight support
+};
+
+app.use(cors(corsOptions));
 
 // Middleware
-app.use(cors());
 app.use(express.json());
 
 //Override default query parsing to use qs
 app.set("query parser", str => qs.parse(str));
 
 app.use('/api/v2', v2Routes);
+app.get('/health', (req, res) => {
+  res.status(200).send('OK');
+})
 
 let backupTask;
 

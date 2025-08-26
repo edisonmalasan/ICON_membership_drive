@@ -38,7 +38,7 @@ export const Footer = () => {
             <div className="flex items-center gap-3 mb-4">
               <div className="size-12">
                 <img
-                  src="src/assets/landing-page/icon.png"
+                  src="/landing-page/icon.png"
                   alt="ICON Logo"
                   className="w-full h-full object-contain"
                 />

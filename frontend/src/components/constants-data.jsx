@@ -6,19 +6,19 @@ export const hoverData = [
     title: "Hackathon",
     description:
       "Collaborative coding competitions where students solve real-world problems, innovate, and showcase their technical skills.",
-    image: "src/assets/landing-page/Hackathon-1.png",
+    image: "/landing-page/Hackathon-1.png",
   },
   {
     title: "Workshop",
     description:
       "Hands-on learning sessions designed to build practical skills, share knowledge, and explore new technologies together.",
-    image: "src/assets/landing-page/Workshop.png",
+    image: "/landing-page/Workshop.png",
   },
   {
     title: "Networking",
     description:
       "A space to connect with fellow students, mentors, and the ICON community.",
-    image: "src/assets/landing-page/Networking.png",
+    image: "/landing-page/Networking.png",
   },
 ];
 
@@ -69,7 +69,7 @@ export const tracingBeamContent = [
         </p>
       </>
     ),
-    image: "src/assets/landing-page/events/MontesProgue-2025.jpg",
+    image: "/landing-page/events/MontesProgue-2025.jpg",
   },
   {
     title: "Capture The Flag",
@@ -89,7 +89,7 @@ export const tracingBeamContent = [
         </p>
       </>
     ),
-    image: "src/assets/landing-page/events/CTF.jpg",
+    image: "/landing-page/events/CTF.jpg",
   },
   {
     title: "Photo Race",
@@ -107,7 +107,7 @@ export const tracingBeamContent = [
         </p>
       </>
     ),
-    image: "src/assets/landing-page/events/PhotoRace.jpg",
+    image: "/landing-page/events/PhotoRace.jpg",
   },
   {
     title: "Pagsibol",
@@ -122,7 +122,7 @@ export const tracingBeamContent = [
         </p>
       </>
     ),
-    image: "src/assets/landing-page/events/Pagsibol.jpg",
+    image: "/landing-page/events/Pagsibol.jpg",
   },
   {
     title: "Iconic Tech Exhibit",
@@ -142,7 +142,7 @@ export const tracingBeamContent = [
         </>
       </>
     ),
-    image: "src/assets/landing-page/events/Arduino.jpg",
+    image: "/landing-page/events/Arduino.jpg",
   },
   {
     title: "Tekken 8 Tournament",
@@ -160,7 +160,7 @@ export const tracingBeamContent = [
         </p>
       </>
     ),
-    image: "src/assets/landing-page/events/TEKKEN.jpg",
+    image: "/landing-page/events/TEKKEN.jpg",
   },
   {
     title: "QUIZ WHIZZ",
@@ -174,6 +174,6 @@ export const tracingBeamContent = [
         </p>
       </>
     ),
-    image: "src/assets/landing-page/events/quiz-whizz.jpg",
+    image: "/landing-page/events/quiz-whizz.jpg",
   },
 ];

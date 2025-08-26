@@ -90,7 +90,7 @@ export default function TermsPolicyPage() {
           <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
             <div className="flex items-center gap-3 mb-4">
               <div className="p-2 rounded-lg h=12 w-12">
-                <img src="src/assets/landing-page/icon.png" alt="" />
+                <img src="/landing-page/icon.png" alt="" />
               </div>
               <h2 className="text-2xl font-bold text-gray-900">About ICON</h2>
             </div>

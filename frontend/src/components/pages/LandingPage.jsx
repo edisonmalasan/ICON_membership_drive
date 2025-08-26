@@ -61,7 +61,7 @@ export default function LandingPage() {
               <nav className="relative z-10 flex w-full items-center justify-center border-t border-b border-neutral-200/20 px-4 py-4 dark:border-neutral-800/20">
                 <div className="flex items-center gap-2">
                   <div className="size-25 rounded-full p-2">
-                    <img src="src/assets/landing-page/icon.png" alt="" />
+                    <img src="/landing-page/icon.png" alt="" />
                   </div>
                 </div>
               </nav>
@@ -168,7 +168,7 @@ export default function LandingPage() {
                           <div className="text-center">
                             <div className="w-25 h-25 mx-auto mb-4 rounded-full border-2 border-teal-500 flex items-center justify-center overflow-hidden">
                               <img
-                                src="/src/assets/landing-page/SCOPE_color.png"
+                                src="/landing-page/SCOPE_color.png"
                                 alt="SCOPE"
                                 className="w-18 h-18 object-cover"
                               />
@@ -194,7 +194,7 @@ export default function LandingPage() {
                           <div className="text-center">
                             <div className="w-25 h-25 mx-auto mb-4 rounded-full border-2 border-teal-500 flex items-center justify-center overflow-hidden">
                               <img
-                                src="/src/assets/landing-page/AIM_color.png"
+                                src="/landing-page/AIM_color.png"
                                 alt="AIM"
                                 className="w-20 h-20 object-cover"
                               />

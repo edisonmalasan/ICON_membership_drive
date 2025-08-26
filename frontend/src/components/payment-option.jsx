@@ -36,18 +36,20 @@ export default function PaymentForm(memberData) {
   const [referenceCode, setReferenceCode] = useState("");
 
   // Get membership type and calculate amount
-  const membershipType = sessionStorage.getItem('membershipType') ? sessionStorage.getItem('membershipType') : "registration";
+  const membershipType = localStorage.getItem('membershipType') ? localStorage.getItem('membershipType') : "registration";
   const amount = membershipType === "renewal" ? 30 : 120;
   const isRenewal = membershipType === "renewal";
 
+  // QR codes from public folder based on membership type
   const qrCodes = {
-    maya: "https://img.freepik.com/free-vector/scan-me-qr-code_78370-9714.jpg?semt=ais_hybrid&w=740&q=80",
-    gcash: "https://img.freepik.com/free-vector/scan-me-qr-code_78370-9714.jpg?semt=ais_hybrid&w=740&q=80",
+    registration: "/registration-qr.jpeg", 
+    renewal: "/renewal-qr.jpeg",
   };
 
+  // Account numbers based on membership type
   const accountNumbers = {
-    maya: "Maya Account: 09294030531",
-    gcash: "GCash Account: 09294030531",
+    registration: "Digital Payment (Registration): GCash/Maya - 09294030531",
+    renewal: "Digital Payment (Renewal): GCash/Maya - 09294030531",
   };
 
   const handleReferenceCodeChange = (e) => {
@@ -73,6 +75,15 @@ export default function PaymentForm(memberData) {
 
     setIsDialogOpen(false);
     setReferenceCode("");
+  };
+
+  // Get the appropriate QR code and account number based on membership type
+  const getCurrentQR = () => {
+    return qrCodes[membershipType];
+  };
+
+  const getCurrentAccountNumber = () => {
+    return accountNumbers[membershipType];
   };
 
   return (
@@ -167,7 +178,7 @@ export default function PaymentForm(memberData) {
               {/* RIGHT COLUMN - Logo */}
               <div className="bg-muted relative hidden md:flex items-center justify-center">
                 <img
-                  src="ICON.png"
+                  src="/ICON.png"
                   alt="ICON Logo"
                   className="h-110 w-110 object-cover"
                 />
@@ -210,12 +221,12 @@ export default function PaymentForm(memberData) {
             <DialogContent className="sm:max-w-[425px] mx-auto flex flex-col items-center justify-center">
               <DialogHeader className="w-full">
                 <DialogTitle className="mt-4 text-center">
-                  Complete Your Payment
+                  Complete Your {isRenewal ? 'Renewal' : 'Registration'} Payment
                 </DialogTitle>
                 <DialogDescription className="text-center text-sm">
                   {selectedPayment === "cash"
                     ? `Pay ₱${amount}.00 in person and enter the reference code provided by the cashier.`
-                    : `Pay ₱${amount}.00 using the QR code or account number below, then enter your transaction reference code.`
+                    : `Pay ₱${amount}.00 using the ${isRenewal ? 'renewal' : 'registration'} QR code below, then enter your transaction reference code.`
                   }
                 </DialogDescription>
               </DialogHeader>
@@ -223,19 +234,30 @@ export default function PaymentForm(memberData) {
               <div className="grid gap-4 m-4 justify-items-center">
                 {/* Amount reminder */}
                 <div className="text-center p-3 bg-muted rounded-lg border w-full">
-                  <p className="text-sm text-muted-foreground">Amount to Pay</p>
+                  <p className="text-sm text-muted-foreground">
+                    {isRenewal ? 'Renewal' : 'Registration'} Amount to Pay
+                  </p>
                   <p className="text-2xl font-bold text-primary">₱{amount}.00</p>
                 </div>
 
                 {selectedPayment === "digital" && (
                   <>
+                    <div className="text-center mb-2">
+                      <p className="text-sm text-muted-foreground">
+                        {isRenewal ? 'Membership Renewal' : 'Registration'} QR Code
+                      </p>
+                    </div>
                     <img
-                      src={qrCodes[selectedPayment]}
-                      alt={`${selectedPayment} QR`}
-                      className="w-64 h-64 object-contain"
+                      src={getCurrentQR()}
+                      alt={`${membershipType} QR Code`}
+                      className="w-64 h-64 object-contain border-2 border-muted rounded-lg"
+                      onError={(e) => {
+                        console.error(`Failed to load QR code: ${getCurrentQR()}`);
+                        e.target.src = "/ICON.png"; // Fallback to ICON logo if QR fails
+                      }}
                     />
-                    <p className="text-center m-2 font-medium">
-                      {accountNumbers[selectedPayment]}
+                    <p className="text-center m-2 font-medium text-sm">
+                      {getCurrentAccountNumber()}
                     </p>
                   </>
                 )}
@@ -245,7 +267,7 @@ export default function PaymentForm(memberData) {
                     <div className="text-6xl mb-4">💵</div>
                     <p className="font-medium text-lg">Cash Payment</p>
                     <p className="text-sm text-muted-foreground mt-2">
-                      Pay ₱{amount}.00 at the ICON office and get your reference code
+                      Pay ₱{amount}.00 at the ICON office for {isRenewal ? 'membership renewal' : 'registration'} and get your reference code
                     </p>
                   </div>
                 )}
@@ -257,7 +279,11 @@ export default function PaymentForm(memberData) {
                   <Input
                     type="text"
                     id="referenceCode"
-                    placeholder={selectedPayment === "cash" ? "Cash receipt code" : "Transaction reference number"}
+                    placeholder={
+                      selectedPayment === "cash" 
+                        ? "Cash receipt code" 
+                        : "Digital payment reference"
+                    }
                     value={referenceCode}
                     onChange={handleReferenceCodeChange}
                     className="w-full text-center"
@@ -268,15 +294,15 @@ export default function PaymentForm(memberData) {
                   <Button
                     className="mt-4 text-md w-full"
                     onClick={handleConfirmPayment}
-                    disabled={!referenceCode.trim()}
+                    disabled={!referenceCode.trim() || loading}
                   >
-                    Confirm Payment (₱{amount}.00)
+                    {loading ? "Processing..." : `Confirm ${isRenewal ? 'Renewal' : 'Registration'} (₱${amount}.00)`}
                   </Button>
                 </DialogFooter>
               </div>
 
               <DialogDescription className="text-center text-xs mt-4">
-                Note: Your payment will be verified within 24 hours. You&apos;ll
+                Note: Your {isRenewal ? 'renewal' : 'registration'} payment will be verified within 24 hours. You&apos;ll
                 receive a confirmation email once approved.
               </DialogDescription>
             </DialogContent>

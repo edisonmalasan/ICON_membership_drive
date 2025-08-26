@@ -26,20 +26,23 @@ export const hoverData = [
 export const words = [
   {
     text: "Our",
-    className: "text-black dark:text-white text-4xl md:text-5xl lg:text-6xl",
+    className:
+      "text-black dark:text-white text-3xl sm:text-5xl md:text-5xl lg:text-6xl xl:text-7xl",
   },
   {
     text: "Events",
-    className: "text-black dark:text-white text-4xl md:text-5xl lg:text-6xl",
+    className:
+      "text-black dark:text-white text-3xl sm:text-5xl md:text-5xl lg:text-6xl xl:text-7xl",
   },
   {
     text: "in",
-    className: "text-black dark:text-white text-4xl md:text-5xl lg:text-6xlk",
+    className:
+      "text-black dark:text-white text-3xl sm:text-5xl md:text-5xl lg:text-6xl xl:text-7xl",
   },
   {
     text: "Pictures.",
     className:
-      "text-[#54AC45] dark:text-[#54AC45] text-4xl md:text-5xl lg:text-6xl",
+      "text-[#54AC45] dark:text-[#54AC45] text-3xl sm:text-5xl md:text-5xl lg:text-6xl xl:text-7xl",
   },
 ];
 
@@ -142,13 +145,14 @@ export const tracingBeamContent = [
     image: "/landing-page/events/Arduino.jpg",
   },
   {
-    title: "Tekken 7 Tournament",
-    badge: "MINI-SPORTS",
+    title: "Tekken 8 Tournament",
+    badge: "E-SPORTS",
     description: (
       <>
         <p>
-          Unleash your fighting spirit in our Tekken 7 mini-tournament! Compete
-          against fellow students in a test of skill, strategy, and reflexes.
+          Unleash your competitive spirit in our thrilling esports tournaments!
+          Test your skills in strategy, reflexes, and teamwork as you face off
+          against fellow students in a fun and engaging environment.
         </p>
         <p>
           More than just a game it’s a chance to bond, have fun, and showcase

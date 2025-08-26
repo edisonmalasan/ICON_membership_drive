@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://apicon.lestat.cloud/api/v2",
+  baseURL: "https://localhost:3000/api/v2",
   headers: {
     "Content-Type": "application/json",
   },

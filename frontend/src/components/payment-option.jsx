@@ -35,20 +35,20 @@ export default function PaymentForm(memberData) {
   const [referenceCode, setReferenceCode] = useState("");
 
   // Get membership type and calculate amount
-  const membershipType = sessionStorage.getItem('membershipType') ? sessionStorage.getItem('membershipType') : "registration";
+  const membershipType = localStorage.getItem('membershipType') ? localStorage.getItem('membershipType') : "registration";
   const amount = membershipType === "renewal" ? 30 : 120;
   const isRenewal = membershipType === "renewal";
 
   // QR codes from public folder based on membership type
   const qrCodes = {
-    registration: "/registration-qr.jpg", 
-    renewal: "/renewal-qr.jpg",
+    registration: "/registration-qr.jpeg", 
+    renewal: "/renewal-qr.jpeg",
   };
 
   // Account numbers based on membership type
   const accountNumbers = {
-    registration: "Digital Payment (Registration): GCash/Maya - 09351262400",
-    renewal: "Digital Payment (Renewal): GCash/Maya - 09351262400",
+    registration: "Digital Payment (Registration): GCash/Maya - 09294030531",
+    renewal: "Digital Payment (Renewal): GCash/Maya - 09294030531",
   };
 
   const handleReferenceCodeChange = (e) => {

@@ -1,14 +1,16 @@
 "use client";
 
-import { AppSidebar } from "@/components/app-sidebar";
+import { useState } from "react";
+import api from "@/api/axios";
 import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogFooter,
-    DialogTrigger,
-} from "@/components/ui/dialog";
+  Alert,
+  AlertDescription,
+  AlertTitle,
+} from "@/components/ui/alert"
+import { ThemeProvider } from "../theme-provider";
+import { AppSidebar } from "@/components/app-sidebar";
+import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
+import { Separator } from "@/components/ui/separator";
 import {
     Breadcrumb,
     BreadcrumbItem,
@@ -17,31 +19,25 @@ import {
     BreadcrumbPage,
     BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { Separator } from "@/components/ui/separator";
-import {
-    SidebarInset,
-    SidebarProvider,
-    SidebarTrigger,
-} from "@/components/ui/sidebar";
-import { ThemeProvider } from "../theme-provider";
+
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { PasswordInput } from "@/components/ui/password-input";
 import {
     DropdownMenu,
     DropdownMenuTrigger,
     DropdownMenuContent,
     DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
-import { PasswordInput } from "@/components/ui/password-input";
-import { Card, CardContent } from "@/components/ui/card";
-import { useState } from "react";
-import api from "@/api/axios";
-import { DialogDescription } from "@radix-ui/react-dialog";
+import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
+import { AlertCircleIcon, CheckCircle2Icon } from "lucide-react";
 
 export default function AccountCreationPage() {
     const [open, setOpen] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
+    const [successMessage, setSuccessMessage] = useState("");
 
     const [formData, setFormData] = useState({
         name: "",
@@ -61,89 +57,63 @@ export default function AccountCreationPage() {
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
         setErrorMessage("");
+        setSuccessMessage("");
     };
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        if (formData.role === "Admin" && formData.password.length < 6) {
-            setErrorMessage("Password must be at least 6 characters long.");
-            return;
-        }
+        setErrorMessage("");
+        setSuccessMessage("");
 
         try {
             const memberPayload = {
                 id: formData.id,
                 email: formData.email,
                 name: formData.name,
-                role: formData.role.toLowerCase(),
+                role: (formData.role || "Member").toLowerCase(),
                 course: formData.course,
                 year: Number(formData.year.replace(/\D/g, "")),
+                password: formData.role === "Admin" ? formData.password : undefined,
             };
 
-            if (formData.role === "Admin" || formData.password) {
-                memberPayload.password = formData.password;
-            }
 
-            const memberRes = await api.post("/members", memberPayload, {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-            });
+            const { data: newMember } = await api.post("/members", memberPayload);
 
-            const newMember = memberRes.data;
-            console.log("Member created:", newMember);
+            const paymentPayload = {
+                user: newMember._id,
+                amount: Number(formData.amountPaid) || 0,
+                paymentMethod: (formData.paymentMethod || "Cash").toLowerCase(),
+                status: formData.paymentStatus,
 
-            if (formData.paymentStatus || formData.amountPaid) {
-                const paymentPayload = {
-                    user: newMember._id,
-                    amount: Number(formData.amountPaid) || 0,
-                    status: formData.paymentStatus || "Unpaid",
-                    paymentMethod: (formData.paymentMethod || "Cash").toLowerCase(),
-                    transactionId:
-                        formData.paymentMethod === "Digital"
-                            ? formData.referenceCode || `DIGITAL-${Date.now()}`
-                            : `CASH-${Date.now()}`,
-                    remarks: formData.remarks || "manual_account_creation",
-                };
+                transactionId: formData.referenceCode
+                    ? formData.referenceCode
+                    : formData.paymentMethod === "Digital"
+                        ? `DIGITAL-${Date.now()}`
+                        : `CASH-${Date.now()}`,
+                remarks: formData.remarks || "manual_account_creation",
+            };
 
-                const paymentRes = await api.post("/payments", paymentPayload, {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem("token")}`,
-                    },
-                });
+            await api.post("/payments", paymentPayload);
 
-                console.log("Payment created:", paymentRes.data);
-            }
+            setSuccessMessage("Account and payment created successfully!");
 
             setFormData({
-                name: "",
-                email: "",
                 id: "",
+                email: "",
                 password: "",
+                name: "",
                 role: "Member",
                 course: "BSCS",
                 year: "1st",
                 paymentStatus: "",
+                paymentMethod: "",
                 amountPaid: "",
+                referenceCode: "",
                 remarks: "",
             });
-            setErrorMessage("");
-        } catch (error) {
-            console.error(
-                "Error creating account:",
-                error.response?.data || error.message
-            );
-
-            if (error.response?.status === 500 || error.response?.status === 500) {
-                if (
-                    error.response.data?.error?.includes("id") ||
-                    error.response.data?.message?.includes("id")
-                ) {
-                    setErrorMessage("This ID is already registered.");
-                    return;
-                }
-            }
+        } catch (err) {
+            setErrorMessage(err.response?.data?.message || "Failed to create account.");
         }
     };
 
@@ -152,16 +122,19 @@ export default function AccountCreationPage() {
             <SidebarProvider>
                 <AppSidebar />
                 <SidebarInset>
-                    <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear">
+                    <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
                         <div className="flex items-center gap-2 px-4">
                             <SidebarTrigger className="-ml-1" />
-                            <Separator orientation="vertical" className="mr-2 data-[orientation=vertical]:h-4" />
+                            <Separator
+                                orientation="vertical"
+                                className="mr-2 data-[orientation=vertical]:h-4"
+                            />
                             <Breadcrumb>
                                 <BreadcrumbList>
-                                    <BreadcrumbItem className="hidden md:block">
+                                    <BreadcrumbItem>
                                         <BreadcrumbLink href="/home">Home</BreadcrumbLink>
                                     </BreadcrumbItem>
-                                    <BreadcrumbSeparator className="hidden md:block" />
+                                    <BreadcrumbSeparator />
                                     <BreadcrumbItem>
                                         <BreadcrumbPage>Manual Account Creation</BreadcrumbPage>
                                     </BreadcrumbItem>
@@ -170,22 +143,36 @@ export default function AccountCreationPage() {
                         </div>
                     </header>
 
-                    <div className="flex flex-1 items-center justify-center p-2">
-                        <Card className="w-full max-w-2xl shadow-none ">
-                            <CardContent className="p-4 md:p-6 flex flex-col gap-4">
-                                <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div className="col-span-2 text-center mb-2">
-                                        <h1 className="text-lg font-bold">Manual Account Creation</h1>
-                                        <p className="text-muted-foreground text-xs">
-                                            Create a user account manually if registration fails
-                                        </p>
-                                        {errorMessage && (
-                                            <p className="text-red-600 text-xs mt-2">{errorMessage}</p>
-                                        )}
-                                    </div>
+                    <div className="flex flex-1 justify-center items-center p-4 min-h-[calc(100vh-64px)]">
+                        <Card className="w-full max-w-2xl shadow-none">
+                            <CardContent className="p-6">
+                                <h1 className="text-lg font-bold text-center mb-2">
+                                    Manual Account Creation
+                                </h1>
+                                <p className="text-muted-foreground text-center text-sm mb-4">
+                                    Create a user account manually if registration fails
+                                </p>
 
+                                {/* Alerts */}
+                                {successMessage && (
+                                    <Alert className="mb-4 text-green-600">
+                                        <CheckCircle2Icon className="h-4 w-4" />
+                                        <AlertTitle>Success</AlertTitle>
+                                        <AlertDescription className="text-green-600">{successMessage}</AlertDescription>
+                                    </Alert>
+                                )}
+
+                                {errorMessage && (
+                                    <Alert variant="destructive" className="mb-4">
+                                        <AlertCircleIcon className="h-4 w-4" />
+                                        <AlertTitle>Error</AlertTitle>
+                                        <AlertDescription>{errorMessage}</AlertDescription>
+                                    </Alert>
+                                )}
+
+                                <form className="grid grid-cols-2 gap-4">
                                     {/* Full Name */}
-                                    <div className="flex flex-col gap-4">
+                                    <div className="flex flex-col space-y-2">
                                         <Label htmlFor="name">Full Name</Label>
                                         <Input
                                             id="name"
@@ -194,12 +181,12 @@ export default function AccountCreationPage() {
                                             onChange={handleChange}
                                             placeholder="Enter full name"
                                             required
-                                            className="h-10"
+                                            className="h-10 w-full"
                                         />
                                     </div>
 
                                     {/* ID Number */}
-                                    <div className="flex flex-col gap-4">
+                                    <div className="flex flex-col space-y-2">
                                         <Label htmlFor="id">ID Number</Label>
                                         <Input
                                             id="id"
@@ -209,12 +196,12 @@ export default function AccountCreationPage() {
                                             placeholder="XXXXXXX"
                                             maxLength={7}
                                             required
-                                            className="h-10"
+                                            className="h-10 w-full"
                                         />
                                     </div>
 
                                     {/* Email */}
-                                    <div className="flex flex-col gap-4">
+                                    <div className="flex flex-col space-y-2">
                                         <Label htmlFor="email">Email</Label>
                                         <Input
                                             id="email"
@@ -224,70 +211,91 @@ export default function AccountCreationPage() {
                                             onChange={handleChange}
                                             placeholder="m@slu.edu.ph"
                                             required
-                                            className="h-10"
+                                            className="h-10 w-full"
                                         />
                                     </div>
 
                                     {/* Role */}
-                                    <div className="flex flex-col gap-4">
+                                    <div className="flex flex-col space-y-2">
                                         <Label htmlFor="role">Role</Label>
                                         <DropdownMenu>
                                             <DropdownMenuTrigger asChild>
-                                                <Button variant="outline" className="w-full justify-between h-10">{formData.role}</Button>
+                                                <Button variant="outline" className="w-full justify-between h-10">
+                                                    {formData.role || "Member"}
+                                                </Button>
                                             </DropdownMenuTrigger>
-                                            <DropdownMenuContent align="start" className="w-[var(--radix-dropdown-menu-trigger-width)]">
-                                                <DropdownMenuItem onClick={() => setFormData({ ...formData, role: "Member" })}>Member</DropdownMenuItem>
-                                                <DropdownMenuItem onClick={() => setFormData({ ...formData, role: "Admin" })}>Admin</DropdownMenuItem>
+                                            <DropdownMenuContent align="start" className="w-full">
+                                                {["Member", "Admin"].map((role) => (
+                                                    <DropdownMenuItem
+                                                        key={role}
+                                                        onClick={() => setFormData({ ...formData, role })}
+                                                    >
+                                                        {role}
+                                                    </DropdownMenuItem>
+                                                ))}
                                             </DropdownMenuContent>
                                         </DropdownMenu>
                                     </div>
 
                                     {/* Password */}
-                                    <div className="flex flex-col gap-4">
+                                    <div className="flex flex-col space-y-2">
                                         <Label htmlFor="password">Password</Label>
                                         <PasswordInput
                                             id="password"
                                             value={formData.password}
-                                            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                                            required={formData.role === "Admin"}
-                                            className="h-10"
+                                            onChange={(e) =>
+                                                setFormData({ ...formData, password: e.target.value })
+                                            }
+                                            required
+                                            className="h-10 w-full"
                                         />
                                     </div>
 
-
                                     {/* Course */}
-                                    <div className="flex flex-col gap-4">
+                                    <div className="flex flex-col space-y-2">
                                         <Label htmlFor="course">Course</Label>
                                         <DropdownMenu>
                                             <DropdownMenuTrigger asChild>
-                                                <Button variant="outline" className="w-full justify-between h-10">{formData.course}</Button>
+                                                <Button variant="outline" className="w-full justify-between h-10">
+                                                    {formData.course}
+                                                </Button>
                                             </DropdownMenuTrigger>
-                                            <DropdownMenuContent align="start" className="w-[var(--radix-dropdown-menu-trigger-width)]">
-                                                <DropdownMenuItem onClick={() => setFormData({ ...formData, course: "BSCS" })}>BSCS</DropdownMenuItem>
-                                                <DropdownMenuItem onClick={() => setFormData({ ...formData, course: "BIST" })}>BSIT</DropdownMenuItem>
-                                                <DropdownMenuItem onClick={() => setFormData({ ...formData, course: "BIST" })}>BSMMA</DropdownMenuItem>
+                                            <DropdownMenuContent align="start" className="w-full">
+                                                {["BSCS", "BSIT", "BSMMA"].map((course) => (
+                                                    <DropdownMenuItem
+                                                        key={course}
+                                                        onClick={() => setFormData({ ...formData, course })}
+                                                    >
+                                                        {course}
+                                                    </DropdownMenuItem>
+                                                ))}
                                             </DropdownMenuContent>
                                         </DropdownMenu>
                                     </div>
 
                                     {/* Year */}
-                                    <div className="flex flex-col gap-4">
+                                    <div className="flex flex-col space-y-2">
                                         <Label htmlFor="year">Year</Label>
                                         <DropdownMenu>
                                             <DropdownMenuTrigger asChild>
-                                                <Button variant="outline" className="w-full justify-between h-10">{formData.year}</Button>
+                                                <Button variant="outline" className="w-full justify-between h-10">
+                                                    {formData.year}
+                                                </Button>
                                             </DropdownMenuTrigger>
-                                            <DropdownMenuContent align="start" className="w-[var(--radix-dropdown-menu-trigger-width)]">
-                                                <DropdownMenuItem onClick={() => setFormData({ ...formData, year: "1st" })}>1st</DropdownMenuItem>
-                                                <DropdownMenuItem onClick={() => setFormData({ ...formData, year: "2nd" })}>2nd</DropdownMenuItem>
-                                                <DropdownMenuItem onClick={() => setFormData({ ...formData, year: "3rd" })}>3rd</DropdownMenuItem>
-                                                <DropdownMenuItem onClick={() => setFormData({ ...formData, year: "4th" })}>4th</DropdownMenuItem>
+                                            <DropdownMenuContent align="start" className="w-full">
+                                                {["1st", "2nd", "3rd", "4th"].map((year) => (
+                                                    <DropdownMenuItem
+                                                        key={year}
+                                                        onClick={() => setFormData({ ...formData, year })}
+                                                    >
+                                                        {year}
+                                                    </DropdownMenuItem>
+                                                ))}
                                             </DropdownMenuContent>
                                         </DropdownMenu>
                                     </div>
 
-                                    {/* Payment Status (Optional) */}
-                                    <div className="flex flex-col gap-4">
+                                    <div className="flex flex-col space-y-2">
                                         <Label htmlFor="paymentStatus">Payment Status (Optional)</Label>
                                         <DropdownMenu>
                                             <DropdownMenuTrigger asChild>
@@ -303,31 +311,38 @@ export default function AccountCreationPage() {
                                         </DropdownMenu>
                                     </div>
 
-                                    {/* Show only if Paid */}
+
+                                    {/* Payment Method */}
                                     {formData.paymentStatus === "Paid" && (
                                         <>
-                                            {/* Payment Method */}
-                                            <div className="flex flex-col gap-4">
+                                            <div className="flex flex-col space-y-2">
                                                 <Label htmlFor="paymentMethod">Payment Method</Label>
                                                 <DropdownMenu>
                                                     <DropdownMenuTrigger asChild>
-                                                        <Button variant="outline" className="w-full justify-between h-10">
+                                                        <Button
+                                                            variant="outline"
+                                                            className="w-full justify-between h-10"
+                                                        >
                                                             {formData.paymentMethod || "Select"}
                                                         </Button>
                                                     </DropdownMenuTrigger>
-                                                    <DropdownMenuContent align="start" className="w-[var(--radix-dropdown-menu-trigger-width)]">
-                                                        <DropdownMenuItem onClick={() => setFormData({ ...formData, paymentMethod: "Cash", referenceCode: "" })}>
-                                                            Cash
-                                                        </DropdownMenuItem>
-                                                        <DropdownMenuItem onClick={() => setFormData({ ...formData, paymentMethod: "Digital" })}>
-                                                            Digital
-                                                        </DropdownMenuItem>
+                                                    <DropdownMenuContent align="start" className="w-full">
+                                                        {["Cash", "Digital"].map((method) => (
+                                                            <DropdownMenuItem
+                                                                key={method}
+                                                                onClick={() =>
+                                                                    setFormData({ ...formData, paymentMethod: method, referenceCode: "" })
+                                                                }
+                                                            >
+                                                                {method}
+                                                            </DropdownMenuItem>
+                                                        ))}
                                                     </DropdownMenuContent>
                                                 </DropdownMenu>
                                             </div>
 
                                             {/* Amount Paid */}
-                                            <div className="flex flex-col gap-4">
+                                            <div className="flex flex-col space-y-2">
                                                 <Label htmlFor="amountPaid">Amount Paid</Label>
                                                 <Input
                                                     id="amountPaid"
@@ -336,29 +351,29 @@ export default function AccountCreationPage() {
                                                     value={formData.amountPaid}
                                                     onChange={handleChange}
                                                     placeholder="Enter amount"
-                                                    className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none h-10"
+                                                    className="h-10 w-full [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none [&-moz-appearance:textfield]"
                                                 />
                                             </div>
 
-                                            {/* Reference Code - show only if Digital */}
-                                            {formData.paymentMethod === "Digital" && (
-                                                <div className="flex flex-col gap-4">
-                                                    <Label htmlFor="referenceCode">Reference Code</Label>
-                                                    <Input
-                                                        id="referenceCode"
-                                                        name="referenceCode"
-                                                        value={formData.referenceCode || ""}
-                                                        onChange={handleChange}
-                                                        placeholder="Enter reference code"
-                                                        className="h-10"
-                                                    />
-                                                </div>
-                                            )}
+                                            {/* Reference Code */}
+
+                                            <div className="flex flex-col space-y-2 col-span-2">
+                                                <Label htmlFor="referenceCode">Reference Code</Label>
+                                                <Input
+                                                    id="referenceCode"
+                                                    name="referenceCode"
+                                                    value={formData.referenceCode}
+                                                    onChange={handleChange}
+                                                    placeholder="Enter reference code"
+                                                    className="h-10 w-full"
+                                                />
+                                            </div>
+
                                         </>
                                     )}
 
                                     {/* Remarks */}
-                                    <div className="flex flex-col gap-4 col-span-2">
+                                    <div className="flex flex-col space-y-2 col-span-2">
                                         <Label htmlFor="remarks">Remarks</Label>
                                         <Input
                                             id="remarks"
@@ -366,11 +381,11 @@ export default function AccountCreationPage() {
                                             value={formData.remarks}
                                             onChange={handleChange}
                                             placeholder="Enter remarks"
-                                            className="h-10"
+                                            className="h-10 w-full"
                                         />
                                     </div>
 
-                                    {/* Submit Button */}
+                                    {/* Create Account */}
                                     <div className="col-span-2">
                                         <Dialog open={open} onOpenChange={setOpen}>
                                             <DialogTrigger asChild>

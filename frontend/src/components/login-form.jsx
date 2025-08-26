@@ -29,7 +29,7 @@ export default function LoginForm({ className, ...props }) {
       localStorage.setItem("email", response.data.member.email);
 
       // Redirect after login
-      window.location.href = "/dashboard"; 
+      window.location.href = "/home"; 
     } catch (err) {
       setError(err.response?.data?.message || "Login failed. Try again.");
     } finally {

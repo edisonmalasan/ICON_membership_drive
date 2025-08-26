@@ -5,7 +5,8 @@ import {
   Home,
   LayoutDashboard,
   CreditCard,
-  UserPlus
+  UserPlus,
+  User
 } from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
@@ -23,7 +24,7 @@ const data = {
   user: {
     name: `${localStorage.getItem("name") || "Admin User "}`,
     email: `${localStorage.getItem("email") || "admin@example.com"}`,
-    avatar: "ICON.png",
+    avatar: "User.jpg"
   },
   logo: [
     {

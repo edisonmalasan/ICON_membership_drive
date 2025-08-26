@@ -115,7 +115,7 @@ export default function AdminPaymentComponent() {
       filterStatus === "All" ? true : payment.status === filterStatus;
 
     const matchesPaymentMethod =
-      filterPaymentMethod === "All" ? true : payment.paymentMethod === filterPaymentMethod;
+      filterPaymentMethod === "All" ? true : payment.paymentMethod.toLowerCase() === filterPaymentMethod
 
     return matchesSearch && matchesCourse && matchesYear && matchesStatus && matchesPaymentMethod;
   });
@@ -184,6 +184,7 @@ export default function AdminPaymentComponent() {
         </div>
 
         {/* Payment Method Filter */}
+        {/* Payment Method Filter */}
         <div className="flex flex-col">
           <label className="text-sm font-medium mb-1">Payment Method</label>
           <Select value={filterPaymentMethod} onValueChange={setFilterPaymentMethod}>
@@ -192,9 +193,8 @@ export default function AdminPaymentComponent() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="All">All</SelectItem>
-              <SelectItem value="Cash">Cash</SelectItem>
-              <SelectItem value="GCash">Digital</SelectItem>
-              {/* Add more methods as needed */}
+              <SelectItem value="cash">Cash</SelectItem>
+              <SelectItem value="digital">Digital</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -206,7 +206,7 @@ export default function AdminPaymentComponent() {
           <TableHeader>
             <TableRow className="[&>*]:whitespace-nowrap hover:bg-background">
               <TableHead className="w-[80px] sm:w-[120px]">ID</TableHead>
-              <TableHead className="hidden md:table-cell w-[150px] md:w-[200px]">
+              <TableHead className="w-[150px] md:w-[200px]">
                 Full Name
               </TableHead>
               <TableHead className="hidden md:table-cell w-[150px] md:w-[200px]">
@@ -235,7 +235,7 @@ export default function AdminPaymentComponent() {
                   <TableCell className="px-2 sm:px-3 py-2">
                     {payment.user?.id || "N/A"}
                   </TableCell>
-                  <TableCell className="hidden md:table-cell px-2 sm:px-3 py-2">
+                  <TableCell className="px-2 sm:px-3 py-2">
                     {payment.user?.name}
                   </TableCell>
                   <TableCell className="hidden md:table-cell px-2 sm:px-3 py-2">
@@ -295,7 +295,7 @@ export default function AdminPaymentComponent() {
             ) : (
               <TableRow>
                 <TableCell
-                  colSpan={7}
+                  colSpan={8}
                   className="text-center py-4 text-white text-base"
                 >
                   No results found.

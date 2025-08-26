@@ -42,7 +42,7 @@ export default function PaymentForm(memberData) {
 
   // QR codes from public folder based on membership type
   const qrCodes = {
-    registration: "/registration-qr.jpeg", 
+    registration: "/registration-qr.jpeg",
     renewal: "/renewal-qr.jpeg",
   };
 
@@ -88,7 +88,7 @@ export default function PaymentForm(memberData) {
 
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-      <div className="relative flex min-h-screen max-h-screen flex-col items-center justify-center md:p-10 overflow-hidden z-10">
+      <div className="relative flex min-h-screen max-h-screen flex-col items-center justify-center md:p-10 z-10">
         <div className="w-full max-w-6xl p-6">
           <Card className="p-0 overflow-hidden shadow-lg w-full">
             <CardContent className="grid p-0 md:grid-cols-2 h-full">
@@ -218,7 +218,7 @@ export default function PaymentForm(memberData) {
 
           {/* MAIN PAYMENT DIALOG */}
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogContent className="sm:max-w-[425px] mx-auto flex flex-col items-center justify-center">
+            <DialogContent className=" sm:max-w-[425px] w-[95%] mx-auto max-h-[90vh] overflow-y-auto sm:overflow-visible">
               <DialogHeader className="w-full">
                 <DialogTitle className="mt-4 text-center">
                   Complete Your {isRenewal ? 'Renewal' : 'Registration'} Payment
@@ -280,8 +280,8 @@ export default function PaymentForm(memberData) {
                     type="text"
                     id="referenceCode"
                     placeholder={
-                      selectedPayment === "cash" 
-                        ? "Cash receipt code" 
+                      selectedPayment === "cash"
+                        ? "Cash receipt code"
                         : "Digital payment reference"
                     }
                     value={referenceCode}

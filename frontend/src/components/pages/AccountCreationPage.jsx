@@ -156,10 +156,17 @@ export default function AccountCreationPage() {
 
                                 {/* Alerts */}
                                 {successMessage && (
+<<<<<<< HEAD
                                     <Alert className="mb-4 text-green-600">
                                         <CheckCircle2Icon className="h-4 w-4" />
                                         <AlertTitle>Success</AlertTitle>
                                         <AlertDescription className="text-green-600">{successMessage}</AlertDescription>
+=======
+                                    <Alert className="mb-4">
+                                        <CheckCircle2Icon className="h-4 w-4" />
+                                        <AlertTitle>Success</AlertTitle>
+                                        <AlertDescription>{successMessage}</AlertDescription>
+>>>>>>> f2a56226cfe1cfac9f7e5809db40dc942a1ebb45
                                     </Alert>
                                 )}
 

@@ -8,7 +8,7 @@ export default function PaymentOptionPage() {
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <WaveBackground />
-      <div className="relative flex items-center justify-center min-h-screen p-6 md:p-10">
+      <div className="relative flex items-center justify-center max-h-screen">
         <div className="w-full max-w-4xl">
           <PaymentForm memberData={memberData} />
         </div>

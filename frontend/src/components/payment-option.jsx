@@ -32,6 +32,7 @@ export default function PaymentForm(memberData) {
 
   const [selectedPayment, setSelectedPayment] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isSampleDialogOpen, setIsSampleDialogOpen] = useState(false);
   const [referenceCode, setReferenceCode] = useState("");
 
   // Get membership type and calculate amount
@@ -76,8 +77,8 @@ export default function PaymentForm(memberData) {
 
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-      <div className="relative flex min-h-screen max-h-screen flex-col items-center justify-center p-6 md:p-10 overflow-hidden z-10">
-        <div className="w-full max-w-6xl">
+      <div className="relative flex min-h-screen max-h-screen flex-col items-center justify-center md:p-10 overflow-hidden z-10">
+        <div className="w-full max-w-6xl p-6">
           <Card className="p-0 overflow-hidden shadow-lg w-full">
             <CardContent className="grid p-0 md:grid-cols-2 h-full">
               {/* LEFT COLUMN */}
@@ -150,7 +151,11 @@ export default function PaymentForm(memberData) {
                   <Button
                     className="w-full py-3 text-md font-medium"
                     onClick={() => {
-                      if (selectedPayment) setIsDialogOpen(true);
+                      if (selectedPayment === "digital") {
+                        setIsSampleDialogOpen(true);
+                      } else if (selectedPayment) {
+                        setIsDialogOpen(true);
+                      }
                     }}
                     disabled={!selectedPayment}
                   >
@@ -170,7 +175,37 @@ export default function PaymentForm(memberData) {
             </CardContent>
           </Card>
 
-          {/* Dialog */}
+          {/* SAMPLE DIALOG (for digital payment reference code guide) */}
+          <Dialog open={isSampleDialogOpen} onOpenChange={setIsSampleDialogOpen}>
+            <DialogContent className="sm:max-w-[425px] mx-auto flex flex-col items-center justify-center">
+              <DialogHeader className="w-full">
+                <DialogTitle className="text-center mt-2">Where to Find Your Reference Code</DialogTitle>
+                <DialogDescription className="text-center text-sm">
+                  Here's a sample screenshot to guide you in locating your transaction reference number.
+                </DialogDescription>
+              </DialogHeader>
+
+              <img
+                src="SampleRefCode.png"
+                alt="Sample Reference Code"
+                className="w-80 h-auto rounded-lg border shadow"
+              />
+
+              <DialogFooter className="w-full">
+                <Button
+                  className="mt-4 text-md w-full"
+                  onClick={() => {
+                    setIsSampleDialogOpen(false);
+                    setIsDialogOpen(true);
+                  }}
+                >
+                  Continue to Payment
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
+          {/* MAIN PAYMENT DIALOG */}
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogContent className="sm:max-w-[425px] mx-auto flex flex-col items-center justify-center">
               <DialogHeader className="w-full">

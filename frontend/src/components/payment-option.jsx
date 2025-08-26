@@ -58,7 +58,7 @@ export default function PaymentForm(memberData) {
       alert("Please enter a reference code");
       return;
     }
-    
+
     const paymentData = {
       user: memberData.memberData._id,
       amount: amount,
@@ -76,7 +76,7 @@ export default function PaymentForm(memberData) {
 
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-      <div className="relative flex min-h-screen flex-col items-center justify-center p-6 md:p-10 overflow-hidden z-10">
+      <div className="relative flex min-h-screen max-h-screen flex-col items-center justify-center p-6 md:p-10 overflow-hidden z-10">
         <div className="w-full max-w-6xl">
           <Card className="p-0 overflow-hidden shadow-lg w-full">
             <CardContent className="grid p-0 md:grid-cols-2 h-full">
@@ -89,7 +89,7 @@ export default function PaymentForm(memberData) {
                   <CardDescription>
                     Complete your {isRenewal ? 'membership renewal' : 'registration'} payment to proceed.
                   </CardDescription>
-                  
+
                   {/* Payment Amount Display */}
                   <div className="mt-4 p-4 bg-muted rounded-lg border">
                     <div className="text-center">
@@ -178,7 +178,7 @@ export default function PaymentForm(memberData) {
                   Complete Your Payment
                 </DialogTitle>
                 <DialogDescription className="text-center text-sm">
-                  {selectedPayment === "cash" 
+                  {selectedPayment === "cash"
                     ? `Pay ₱${amount}.00 in person and enter the reference code provided by the cashier.`
                     : `Pay ₱${amount}.00 using the QR code or account number below, then enter your transaction reference code.`
                   }
@@ -219,8 +219,8 @@ export default function PaymentForm(memberData) {
                   <Label className="block text-center" htmlFor="referenceCode">
                     Enter Reference Code
                   </Label>
-                  <Input 
-                    type="text" 
+                  <Input
+                    type="text"
                     id="referenceCode"
                     placeholder={selectedPayment === "cash" ? "Cash receipt code" : "Transaction reference number"}
                     value={referenceCode}

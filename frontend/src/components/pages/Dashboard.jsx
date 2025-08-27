@@ -23,7 +23,8 @@ import {
     ChartTooltip,
     ChartTooltipContent,
 } from "@/components/ui/chart"
-import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from "recharts";
+
+import { BarChart, Bar, XAxis, YAxis, Area, AreaChart, CartesianGrid, Cell } from "recharts";
 import { TrendingUp } from "lucide-react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -33,6 +34,7 @@ export default function Dashboard() {
     const [courseData, setCourseData] = useState([]);
     const [chartConfig, setChartConfig] = useState({});
     const [totalEarnings, setTotalEarnings] = useState(0);
+    const [paidCount, setPaidCount] = useState(0);
 
     // Fetch members for Chart 1
     useEffect(() => {
@@ -86,7 +88,6 @@ export default function Dashboard() {
     }, []);
 
 
-    // Fetch payments for total earnings
     useEffect(() => {
         const fetchPayments = async () => {
             try {
@@ -97,8 +98,13 @@ export default function Dashboard() {
                 });
 
                 const payments = res.data;
+
                 const total = payments.reduce((sum, p) => sum + (p.amount || 0), 0);
+
+                const count = payments.length;
+
                 setTotalEarnings(total);
+                setPaidCount(count);
             } catch (error) {
                 console.error("Failed to fetch payments:", error);
             }
@@ -144,25 +150,18 @@ export default function Dashboard() {
                                         <div className="flex flex-1 items-center justify-center w-full">
                                             <ChartContainer
                                                 config={chartConfig}
-                                                className="w-[70%] h-full flex items-center justify-center"
+                                                className="w-[90%] h-full flex items-center justify-center"
                                             >
-                                                <PieChart>
-                                                    <ChartTooltip
-                                                        cursor={false}
-                                                        content={<ChartTooltipContent hideLabel />}
-                                                    />
-                                                    <Pie
-                                                        data={courseData}
-                                                        dataKey="members"
-                                                        nameKey="course"
-                                                        outerRadius="80%"
-                                                    />
-                                                    <Legend
-                                                        layout="vertical"
-                                                        verticalAlign="middle"
-                                                        align="right"
-                                                    />
-                                                </PieChart>
+                                                <BarChart data={courseData}>
+                                                    <XAxis dataKey="course" />
+                                                    <YAxis />
+                                                    <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
+                                                    <Bar dataKey="members">
+                                                        {courseData.map((entry, index) => (
+                                                            <Cell key={`cell-${index}`} fill={entry.fill} />
+                                                        ))}
+                                                    </Bar>
+                                                </BarChart>
                                             </ChartContainer>
                                         </div>
                                     </div>
@@ -177,6 +176,9 @@ export default function Dashboard() {
                                 <p className="text-lg text-muted-foreground">Total Earnings</p>
                                 <p className="text-4xl font-bold text-primary mt-2">
                                     ₱{totalEarnings.toLocaleString()}
+                                </p>
+                                <p className="text-xs text-muted-foreground mt-2">
+                                    Based on {paidCount} successful transactions
                                 </p>
                             </div>
 
